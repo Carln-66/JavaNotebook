@@ -1,3 +1,5 @@
+package ControlFlow;
+
 import java.util.Scanner;
 /**********************************
  4. 多重选择： switch语句
