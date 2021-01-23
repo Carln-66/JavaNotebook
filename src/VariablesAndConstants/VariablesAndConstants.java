@@ -1,3 +1,5 @@
+package VariablesAndConstants;
+
 /*************************************
  变量与常量
 

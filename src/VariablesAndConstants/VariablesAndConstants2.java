@@ -1,3 +1,5 @@
+package VariablesAndConstants;
+
 /*************************
  如果想让某个常量在一个类的额多个方法中使用，将其称为类常量（class constant）
  *用关键词static final设置一个类常量。
