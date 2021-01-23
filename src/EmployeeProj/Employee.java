@@ -21,12 +21,12 @@ class Employee {
     //这样是为了更好的封装
     //实例字段通常属于某个类型
     //可以将实例字段定义为final。这必须确保在每个构造器执行之后，这个字段的值已经设置，并且无法再修改。
-    private String name;        //因为这个对象在构造后，值不会再改变，因为可以将此字段声明为
+    private final String name;        //因为这个对象在构造后，值不会再改变，因为可以将此字段声明为
                                 //      private final String name;
     //final修饰符对于基本类型或者不可变类(类中所有方法都不会改变其对象)字段尤其有用。
     //例如String类就是不可变的
     private double salary;
-    private LocalDate hireDays;
+    private final LocalDate hireDays;
 
 
 
