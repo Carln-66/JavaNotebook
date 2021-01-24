@@ -1,4 +1,4 @@
-package Inheritance;
+package Inheritance.ManagerTest;
 
 /****************************
  类，超类，子类
