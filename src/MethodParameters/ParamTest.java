@@ -1,7 +1,5 @@
 package MethodParameters;
 
-import org.w3c.dom.ls.LSOutput;
-
 /*******
  程序语言中如何将参数传递给方法(或函数)的一些专业术语
  * 按值调用(call by value)表示方法接受的是调用者提供的值
@@ -90,15 +88,15 @@ public class ParamTest {
 
         //测试2：Methods can cahnge the state of object parameters
         System.out.println("测试三倍工资");
-        var harry = new SimplifiedEmployee("Harry", 50000);
+        var harry = new Employee("Harry", 50000);
         System.out.println("更改前，工资为：" + harry.getSalary());
         tripleSalary(harry);
         System.out.println("更改后，工资为：" + harry.getSalary());
 
         //测试3：Methods can't attach new objects to object parameters
         System.out.println("测试交换：");
-        var a = new SimplifiedEmployee("Alice", 70000);
-        var b = new SimplifiedEmployee("Bob", 60000);
+        var a = new Employee("Alice", 70000);
+        var b = new Employee("Bob", 60000);
         System.out.println("更改前：a = " + a.getName());
         System.out.println("更改前：b = " + b.getName());
         swap(a, b);
@@ -120,15 +118,15 @@ public class ParamTest {
         System.out.println("结束方法 ，x = " + x);
     }
 
-    public static void tripleSalary(SimplifiedEmployee x)      //起作用
+    public static void tripleSalary(Employee x)      //起作用
     {
         x.raiseSalary(200);
         System.out.println("结束方法 ，x = " + x.getSalary());
     }
 
-    public static void swap(SimplifiedEmployee x, SimplifiedEmployee y)
+    public static void swap(Employee x, Employee y)
     {
-        SimplifiedEmployee temp = x;
+        Employee temp = x;
         x = y;
         y = temp;
         System.out.println("结束方法：x = " + x.getName());

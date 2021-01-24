@@ -1,11 +1,11 @@
 package MethodParameters;
 
 //Simplified Employee Class
-class SimplifiedEmployee {
+class Employee {
     private String name;
     private double salary;
 
-    public SimplifiedEmployee(String n, double s)
+    public Employee(String n, double s)
     {
         name = n;
         salary = s;
