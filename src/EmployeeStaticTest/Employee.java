@@ -1,6 +1,6 @@
 package EmployeeStaticTest;
 
-class EmployeeStaticTest {
+class Employee {
     //将nextId设置为静态使不论id有多少，该字段只有一个，即便没有EmployeeStaticTest对象，该静态字段依然存在
     private static int nextId = 1;
 
@@ -9,7 +9,7 @@ class EmployeeStaticTest {
     private int id;
 
     //类构造器
-    public EmployeeStaticTest(String n, double s)
+    public Employee(String n, double s)
     {
         name = n;
         salary = s;
@@ -44,7 +44,7 @@ class EmployeeStaticTest {
     }
 
     public static void main(String[] args) {
-        var e = new EmployeeStaticTest("Harry", 50000);
+        var e = new Employee("Harry", 50000);
         System.out.println(e.getName() + " " + e.getSalary());
     }
 }
