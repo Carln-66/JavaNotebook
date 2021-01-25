@@ -1,4 +1,4 @@
-package Inheritance;
+package Inheritance.AbtractClass;
 
 /*****************************************
  5. 多态
