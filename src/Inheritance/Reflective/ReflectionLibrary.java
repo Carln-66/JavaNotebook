@@ -1,0 +1,148 @@
+package Inheritance.Reflective;
+
+/*************************************
+ 反射
+ 反射库(reflection library)提供了一个丰富且精巧的工具集，可以用来编写能够动态操纵Java代码的程序。使用反射，Java可以支持
+ 用户系欸按生成器，对象关系映射器以及很其他需要动态查询能力的开发工具。
+ 能够分析类能力的程序称为反射(reflective)。反射机制的功能极其强大，它可以用来：
+ * 在运行时分析类的能力
+ * 在运行时检查对象，例如便下一个适用于所有类的toString方法
+ * 实现泛型数组操作代码
+ * 利用Method对象
+
+ 1. Class类
+ 在程序运行期间，java运行时系统始终未所有对象维护一个运行时类型标识。这个信息会跟踪每个对象所属的类。虚拟机利用运行时类型信息
+ 选择要执行的正确方法。
+ 不过可以使用一个特殊的Java类访问这些信息。保存这些信息的类名为Class。Object类中的个体Class( )方法会返回一个Class类型
+ 的实例。
+    Employee e;
+    Class cl = e.getClass();
+ 就像Employee对象描述一个特定员工的属性一样，Class对象会描述一个特定类的属性。可能最常用的Class方法就是getName。
+ 这个方法将返回类的名字。例如下面这条语句：
+    System.out.println(e.getClass().getName() + " " + e.getName());
+ 如果e是一个员工则会输出：
+    Employee Harry Hacker
+ 如果e是经理，则会输出：
+    Manager Harry Hacker
+ 如果类在一个包里，包的名字也作为类名的一部分：
+    var generator = new Random();
+    Class cl = generator.getClass();
+    String name = cl.getName();     //name is set to "java.util.Random"
+ 还可以使用静态方法forName获得类名对应的Class对象。
+ String className = "java.util.Random";
+ Class.cl = Class.forName(ClassName);
+ 如果类名保存在一个字符串中，这个字符串会在运行时变化，就可以使用这个方法。如果className是一个类名或者接口名，
+ 这个方法可以正常执行。否则forName方法将抛出一个检查型异常(checked exception)。无论何时使用这个方法，都应该提供一个异常
+ 处理器(exception handler)。
+ 获得Class类对象的第三种方法是一个很方便的快捷方式。如果T是任意的Java类型(或void关键字)，T.class将代表匹配的类对象。例如：
+    Class cl1 = Random.class;   //if you import java.util.*;
+    Class cl2 = int class;
+    Class cl3 = Double[].class;
+ 需要注意的是，一个Class对象实际上表示的是一个类型，这可能是类，也可能不是类。例如，int不是类，但int.class是一个Class类
+ 型的对象。
+ * Class类实际上是一个泛型类。例如，Employee.class的类型是Class<Employee>。
+ 虚拟机为每个类型管理一个唯一的Class对象。因此，可以利用==运算符实现两个类对象的比较。例如：
+    if (e.getClass() == Employee.class). . .
+ 如果e是一个employee实例，这个测试将通过。与条件e instanceof Employee不同，如果e是某个子类(如Manager)的实例，这个测试
+ 将失败。
+ 如果有一个Class类型的对象，可以用它构造类的实例。调用getConstructor方法将得到一个Constructor的类型的对象，
+ 然后使用newInstance方法来构造一个实例。例如：
+    var className = "java.util.Random";     //or any other name of a class with
+                                            //a no-arg constructor
+    Class cl = Class.forName(className);
+    Object obj = cl.getConstructor().newInstance();
+ 如果这个类没有无参数的构造器，getConstructor方法会抛出一个异常。
+
+ 2. 声明异常入门
+ 当运行发生错误时，程序会抛出一个异常。抛出异常比终止程序要灵活得多，这是因为可以提供一个处理器(handler)“捕获”这个
+ 异常并进行处理
+ 如果没有提供处理器，程序就会终止，并在控制台上打印出一个消息，给出异常的类型。
+ 异常有两种类型：非检查型(unchecked)异常和检查型(checked)异常，对于检查型一场，编译器会检查程序员是否知道这个异常并
+ 做好准备来处理后果。不过，有很多常见的异常，例如月结错误或者访问null引用，都属于非检查型异常。编译器不期望你为这些异常
+ 提供处理器。
+ 如果一个方法包含一条可能抛出检查型异常的语句，则在方法名上增加一个throws子句。
+    public static void doSomethingWithClass(String name)
+        throws ReflectiveOperationException
+    {
+        Class cl = Class.forName(name);     //might throw exception
+        do something with cl
+    }
+ 调用这个方法的任何方法也都需要一个throws声明。这也包括main方法。如果一个异常确实出现，main方法将终止并提供一个堆栈轨迹。
+ 只需要为检查型异常提供一个throws子句。很容易找出哪些方法会抛出检查型异常——只要你调用了一个可能抛出检查型异常的方法而没有
+ 提供相应的异常处理器，编译器就会报错。
+
+ 3. 资源
+ 类通常有一些关联的数据文件，例如：
+ * 图像和声音文件
+ * 包含消息字符串和按钮标签的文本文件
+ Class类提供了一个很有用的服务可以查找资源文件，下面是必要的步骤：
+ ① 获得拥有资源的类的Class对象，例如，ResourceTest.class。
+ ② 有些方法，如ImagIcon类的getImage方法，接受描述资源位置的URL。则要调用
+    URL url = cl.getResource("about.gif");
+ ③ 否则，使用getResourceAsStream方法得到一个输入流来读取文件中的数据。
+
+ 4. 利用反射分析类的能力
+ 下面是反射机制最重要的内容——检查类的结构。
+ 在java.lang.reflect包中有三个类Field,Method，Constructor分别用于描述类的字段，方法和构造器。这三个类都有一个
+ 叫做getName的方法，用来返回字段，方法或构造器的名称。Field类有一个getType方法，用来返回描述字段类型的一个对象，这
+ 个对象的类型同样是Class。Method和Constructor类有报告参数类型的方法，Method类还有一个报告返回类型的方法。这三个类
+ 都有一个名为getModifiers的方法，它将返回一个整数，用不同的0/1为描述所使用的修饰符，如public和static。
+ 另外，还可以利用java.lang.reflect包中Modifier类的静态方法分析getModifiers返回的这个整数。例如，可以使用Modifier
+ 类中得isPublic，isPrivate或isFinal判断方法或构造器是public，private还是final。我们需要做的就是在getModifiers
+ 返回的整数上调用Modifier类中适当的方法，另外，还可以利用Modifier.toString方法将修饰符打印出来。
+ Class类中的getFields，getMethods和getConstructors方法将分别返回这个类支持的公共字段，方法和构造器的数组，其中包
+ 括超类的公共成员。Class类的getDeclareFields，getDeclareMethods和getDeclaredConstructors方法将分别返回类中声
+ 明的全部字段，方法和构造器的数组，其中包括私有成员，包成员和受保护成员，但不包括超类的成员。
+
+ 5. 使用反射在运行时分析对象
+ 我们已经知道如何查看任意对象数组据字段字段的名字和类型：
+ * 获得对应的Class对象
+ * 在这个Class对象上调用getDeclaredFields
+ 反射机制可以查看在编译时还不知道的对象字段。
+ 要做到这一点，关键方法是Field类中的get方法。如果f是一个Field类型的对象(例如，通过getDeclaredFields得到的对象)，
+ obj是某个包含f字段的类的对象，f.get(obj)将返回一个对象，其值为obj的当前字段值。
+    var harry = new Employee("Harry Hacker", 50000, 10, 1, 1989);
+    Class cl = harry.getClass();
+    //the class object representing Employee
+    Field f = cl.getDeclaredField("name");
+    //the name field of the Employee class
+    Object v = f.get(harry);
+    //the value of the name field of the harry object, i.e., the String object "Harry Hacker"
+ 当然，不仅可以获得值，也可以设置值。调用f.set(obj,value）将把对象obj的f表示的字段设置为新值。
+ 实际上，以上代码存在一个问题。由于name是一个私有字段，所以get和set方法会抛出一个IllegalAccessException。只能对可以访问
+ 的字段使用get和set方法。java安全机制允许查看一个对象有哪些字段，但是除非拥有访问权限，否则不允许读写那些字段值。
+ 反射机制的默认行为受限于Java的访问控制。不过，可以调用Field，Method或Constructor对象的setAccessible方法覆盖Java的
+ 访问控制。例如，
+    f.setAccessible(true);      //now OK to call f.get(harry)
+ setAccessible方法是AccessibleObject类中的一个方法，它是Field，Method和Constructor类的公共超类。这个特性是为调试，
+ 持久储存和类似机制提供的。
+ 如果不允许访问，setAccessible调用会抛出一个异常。访问可以被模块系统或安全管理器拒绝。安全管理器并不常用，但是在Java9中，
+ 由于JavaAPI是模块化的，每个程序都包含模块。
+ 由于太多的库都使用了反射，所以当你使用反射访问一个模块中的非公共特性时，Java9和10会给出一个警告。
+
+ 我们来看一个可用于任意类的通用toString方法 。这个通用toString方法使用getDeclaredFields获得所有的数据字段，然后使用
+ setAccessible便利方法将所有的字段设置为可访问的。对于每个字段，将获得名字和值。通过递归调用toString方法，将每个值转换
+ 为字符串。
+ 这个通用的toString方法需要解决几个复杂的问题。循环引用将有可能导致无限递归。因此，ObjectAnalyzer会跟踪已访问过的对象。
+ 另外，为了能够查看数组内部，需要采用一种不同的方式，可以使用这个toString方法查看任意对象内部的信息。例如下面这个调用：
+    var squares = new ArrayList<Integer>();
+    for (int i; i <= 5; i++) squares.add(i * i);
+    System.out.println(new ObjectAnalyzer().toString(squares));
+ 将会产生下面的打印结果
+    java.util.ArrayList[elementData=class java.lang.Object[]{java.lang.Integer[value=1][][],
+    java.lang.Integer[value=4][][],java.lang.Integer[value=9][][],
+    java.lang.Integer[value=16][][],java.lang.Integer[value=25][][],null,null,null,null,null},
+    size=5][modCount=5][][]
+ 还可以使用这个通用的toString方法实现自定义类的toString方法，如下所示：
+    public String toString()
+    {
+        return new ObjectAnalyzer().toString(this);
+    }
+ 这样可以轻松地提供一个通用toSting方法，同样很有用。
+
+ */
+
+
+public class ReflectionLibrary {
+
+}
