@@ -38,9 +38,6 @@ package ClassAndMethod;
         if (str == null)
  有时要检查一个字符串既不是null也不是空船，这种情况下使用以下条件
         if (str != null && str.length() != 0)
-
-
-
  *
  */
 
@@ -50,15 +47,8 @@ public class StringClass {
         String s = greeting.substring(0,3);     //创建一个有字符'hel'组成的字符串
         System.out.println(s);                  //这里复制的位置是0，1，2个字符
 
-
         String all = String.join("/","S","M","L","XL");     //利用join方法以“/”分隔多个字符
 
-
         "Hello".equalsIgnoreCase("hello");       //利用equalsIgnoreCase方法检测字符串不区分大小写的情况下是否相等
-
-
-
-
-
     }
 }
