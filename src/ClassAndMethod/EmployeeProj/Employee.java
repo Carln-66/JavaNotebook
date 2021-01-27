@@ -2,17 +2,17 @@ package ClassAndMethod.EmployeeProj;
 
 import java.time.LocalDate;
 
-/********
- * 构造器与类同名
- * 每个类可以有一个以上的构造器
- * 构造器可以有0个，1个或多个参数
- * 构造器没有返回数值
- * 构造器总是伴随着new操作符一起调用
- *
- 想要获得或设置实例字段的值，需要提供以下三项的内容
- * 一个私有的数据字段
- * 一个公共的字段访问器方法
- * 一个公共的字段更改器方法
+/******************************
+ *  构造器与类同名
+ *  每个类可以有一个以上的构造器
+ *  构造器可以有0个，1个或多个参数
+ *  构造器没有返回数值
+ *  构造器总是伴随着new操作符一起调用
+
+    想要获得或设置实例字段的值，需要提供以下三项的内容
+ *  一个私有的数据字段
+ *  一个公共的字段访问器方法
+ *  一个公共的字段更改器方法
  */
 
 
@@ -21,18 +21,16 @@ class Employee {
     //这样是为了更好的封装
     //实例字段通常属于某个类型
     //可以将实例字段定义为final。这必须确保在每个构造器执行之后，这个字段的值已经设置，并且无法再修改。
-    private final String name;        //因为这个对象在构造后，值不会再改变，因为可以将此字段声明为
-                                //      private final String name;
+    private final String name;          //因为这个对象在构造后，值不会再改变，因为可以将此字段声明为
+                                        //  private final String name;
     //final修饰符对于基本类型或者不可变类(类中所有方法都不会改变其对象)字段尤其有用。
     //例如String类就是不可变的
     private double salary;
     private final LocalDate hireDays;
 
-
-
     public Employee(String n, double s, int year, int month, int day)   //类构造器(constructor)
     {
-        name = n;           //String name = n   //报错，不能再构造器中定义与实例字段同名的局部变量
+        name = n;           //  String name = n   //报错，不能再构造器中定义与实例字段同名的局部变量
         salary = s;
         hireDays = LocalDate.of(year, month, day);
     }
