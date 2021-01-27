@@ -14,7 +14,5 @@ public class ArrayTest1 {
         * char型初始化值：ASCII码 -> 0 而非'0'
         * String型初始化值：null
         * 布尔型初始化值：false */
-
-
     }
 }
