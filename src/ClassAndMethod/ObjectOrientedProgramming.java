@@ -27,11 +27,7 @@ import java.util.Date;
  5. 对象与对象变量
  要想使用对象，首先必须构造对象，并指定其初始状态。然后对对象应用方法。
  在Java程序设计语言中，要使用构造器(constructor，或称为构造函数)构造新实例。构造器是一种特殊的方法，用来初始化对象。
-
-
-
  */
-
 
 public class ObjectOrientedProgramming {
     public static void main(String[] args) {
@@ -45,8 +41,5 @@ public class ObjectOrientedProgramming {
 
         //如果想多次使用对象，需要将对象存放在一个变量中
         Date birthday = new Date();
-
-
-
     }
 }
