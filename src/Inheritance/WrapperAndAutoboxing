@@ -1,5 +1,7 @@
     有时，需要将int这样的基本类型转换为对象。所有的基本类型都有一个与之对应的类。例如，integer类对应基本类型int。
-    通常，这些类称为包装器(wrapper)。这些包装器有显而易见的名字：Integer, Long, Float, Double, Short, Byte, Character和Boolean(前6个类派生于公共的超类Number)。包装器类是不可变的，即一旦构造了包装器，就不允许更改包装在其中的值。同时，包装器类还是final，因此不能派生它们的子类。
+    通常，这些类称为包装器(wrapper)。这些包装器有显而易见的名字：Integer, Long, Float, Double, Short, Byte, Character和Boolean(前6个
+    类派生于公共的超类Number)。包装器类是不可变的，即一旦构造了包装器，就不允许更改包装在其中的值。同时，包装器类还是final，因此不能派生它们的子
+    类。
     假设要定义一个整型数组列表，但尖括号中的类型参数不允许是基本型，也就是说不允许携程ArrayList<int>。这里就可以用到Integer包装器类。我们可以声明一个Integer对象的数组列表。
         var list = new ArrayList<Integer>();
  * 由于每个值分别包装在对象中，所以ArrayList<Integer>的效率远远低于int[ ]数组。
