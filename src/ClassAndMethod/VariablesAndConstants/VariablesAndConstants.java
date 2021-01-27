@@ -1,33 +1,29 @@
 package ClassAndMethod.VariablesAndConstants;
 
 /*************************************
- 变量与常量
+    变量与常量
+    1. 变量声明（Variable declaration）
+ ①  Type
+ ②  Variable name
+ ③  Operator
+ ④  Variable data
+ *  不能用Java保留字作为变量名
 
- 1. 变量声明（Variable declaration）
- ①Type
- ②Variable name
- ③Operator
- ④Variable data
- *不能用Java保留字作为变量名
-
- 2. 变量初始化
+    2. 变量初始化
  声明变量后需用赋值语句对变量进行显式初始化。
+        public static void main (String[]args)
+        {
+            int a;          //系统报错: java: 可能尚未初始化变量a
+            System.out.println(a);
+        }
+        }
 
-
- public static void main (String[]args){
- int a;          //系统报错: java: 可能尚未初始化变量a
- System.out.println(a);
- }
- }
-
- 3.
- 常量
- 用关键字final指示常量
- *final表示变量只能被赋值一次，一旦赋值，不能再做修改。
- *习惯上常量名使用全大写。
+    3. 常量
+    用关键字final指示常量
+ *  final表示变量只能被赋值一次，一旦赋值，不能再做修改。
+ *  习惯上常量名使用全大写。
 
  ************************************/
-
 
 public class VariablesAndConstants {
     public static void main(String[] args) {
