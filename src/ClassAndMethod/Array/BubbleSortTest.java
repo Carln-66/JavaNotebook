@@ -1,4 +1,4 @@
-package ClassAndMethod.Array.Sort;
+package ClassAndMethod.Array;
 
 /*************************************
  数组冒泡排序的实现
