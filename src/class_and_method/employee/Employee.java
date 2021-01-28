@@ -1,4 +1,4 @@
-package class_and_method.EmployeeProj;
+package class_and_method.employee;
 
 import java.time.LocalDate;
 
