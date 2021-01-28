@@ -1,4 +1,4 @@
-package class_and_method.ControlFlow;
+package class_and_method.control_fow;
 
 import java.util.Scanner;
 
