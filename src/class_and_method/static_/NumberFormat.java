@@ -1,4 +1,4 @@
-package class_and_method.Static;
+package class_and_method.static_;
 
 /******************
     4. 工厂方法
