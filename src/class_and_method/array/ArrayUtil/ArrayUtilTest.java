@@ -1,4 +1,4 @@
-package class_and_method.Array.ArrayUtil;
+package class_and_method.array.ArrayUtil;
 
 public class ArrayUtilTest {
     public static void main(String[] args) {

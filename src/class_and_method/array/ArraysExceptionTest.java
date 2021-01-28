@@ -1,4 +1,4 @@
-package class_and_method.Array;
+package class_and_method.array;
 
 /***
  *  数组中的常见异常

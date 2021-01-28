@@ -1,4 +1,4 @@
-package class_and_method.Array.ArrayUtil;
+package class_and_method.array.ArrayUtil;
 
 import java.util.Arrays;
 
