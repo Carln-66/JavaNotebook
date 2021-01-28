@@ -1,4 +1,4 @@
-package Inheritance.GenericClass;
+package Inheritance.generic_class;
 
 import Inheritance.ObjectClass.Employee;
 
