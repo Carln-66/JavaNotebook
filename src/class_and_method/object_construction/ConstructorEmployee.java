@@ -1,4 +1,4 @@
-package class_and_method.ObjectConstruction;
+package class_and_method.object_construction;
 
 import java.util.Random;
 

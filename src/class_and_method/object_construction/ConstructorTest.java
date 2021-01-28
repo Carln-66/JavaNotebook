@@ -1,4 +1,4 @@
-package class_and_method.ObjectConstruction;
+package class_and_method.object_construction;
 
 /**
 在本程序中展示了本节对象构造中讨论的很多特性
