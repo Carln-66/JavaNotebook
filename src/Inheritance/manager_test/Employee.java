@@ -1,4 +1,4 @@
-package Inheritance.ManagerTest;
+package Inheritance.manager_test;
 
 import java.time.LocalDate;
 
