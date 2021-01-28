@@ -1,4 +1,4 @@
-package OOP;
+package oop;
 
 /*
  *  类中属性的使用

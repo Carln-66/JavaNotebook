@@ -1,4 +1,4 @@
-package OOP;
+package oop;
 
 /*
  *              一、构造器的作用
@@ -13,8 +13,6 @@ package OOP;
  *                  2. 定义构造器的格式：权限修饰符 类名(形参列表){}
  *
  */
-
-import java.security.PublicKey;
 
 public class ConstructorTest {
     public static void main(String[] args) {

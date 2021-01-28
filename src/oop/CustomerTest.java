@@ -1,4 +1,4 @@
-package OOP;
+package oop;
 
 /*
  *      类中方法的声明和使用

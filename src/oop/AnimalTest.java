@@ -1,4 +1,4 @@
-package OOP;
+package oop;
 
 /*
  *          面向对象的特征之一：封装与隐藏
