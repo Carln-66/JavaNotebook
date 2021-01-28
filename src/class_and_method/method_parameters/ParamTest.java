@@ -1,4 +1,4 @@
-package class_and_method.MethodParameters;
+package class_and_method.method_parameters;
 
 /******************************************
     程序语言中如何将参数传递给方法(或函数)的一些专业术语

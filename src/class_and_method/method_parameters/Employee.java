@@ -1,4 +1,4 @@
-package class_and_method.MethodParameters;
+package class_and_method.method_parameters;
 
 //Simplified Employee Class
 class Employee {
