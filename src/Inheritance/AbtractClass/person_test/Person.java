@@ -1,4 +1,4 @@
-package Inheritance.AbtractClass.PersonTest;
+package Inheritance.AbtractClass.person_test;
 
 public abstract class Person {
 

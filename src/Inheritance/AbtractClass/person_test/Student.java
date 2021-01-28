@@ -1,4 +1,4 @@
-package Inheritance.AbtractClass.PersonTest;
+package Inheritance.AbtractClass.person_test;
 
 public class Student extends Person {
 
