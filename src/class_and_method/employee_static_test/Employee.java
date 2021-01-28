@@ -1,4 +1,4 @@
-package class_and_method.EmployeeStaticTest;
+package class_and_method.employee_static_test;
 
 class Employee {
     //将nextId设置为静态使不论id有多少，该字段只有一个，即便没有EmployeeStaticTest对象，该静态字段依然存在

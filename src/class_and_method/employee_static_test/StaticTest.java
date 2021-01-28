@@ -1,4 +1,4 @@
-package class_and_method.EmployeeStaticTest;
+package class_and_method.employee_static_test;
 
 public class StaticTest {
     public static void main(String[] args) {
