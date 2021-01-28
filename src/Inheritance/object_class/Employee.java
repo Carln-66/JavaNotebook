@@ -1,4 +1,4 @@
-package Inheritance.ObjectClass;
+package Inheritance.object_class;
 
 import java.time.LocalDate;
 import java.util.Objects;

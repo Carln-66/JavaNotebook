@@ -1,7 +1,4 @@
-package Inheritance.ObjectClass;
-
-import java.time.LocalDate;
-import java.util.Objects;
+package Inheritance.object_class;
 
 public class Manager extends Employee
 {
