@@ -1,4 +1,4 @@
-package class_and_method.VariablesAndConstants;
+package class_and_method.variables_and_constants;
 
 /*************************************
     变量与常量
