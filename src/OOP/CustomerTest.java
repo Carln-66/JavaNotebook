@@ -47,6 +47,10 @@ package OOP;
  */
 
 public class CustomerTest {
+    public static void main(String[] args) {
+        Customer cos = new Customer();
+        System.out.println(cos.getNation("中国"));
+    }
 }
 
 //客户类
@@ -73,7 +77,5 @@ class Customer{
         String info = "我的国籍是" + nation;
         return info;
     }
-
-
 }
 
