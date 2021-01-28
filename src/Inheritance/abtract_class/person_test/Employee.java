@@ -1,4 +1,4 @@
-package Inheritance.AbtractClass.person_test;
+package Inheritance.abtract_class.person_test;
 
 import java.time.LocalDate;
 
