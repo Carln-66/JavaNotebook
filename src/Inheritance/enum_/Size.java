@@ -1,4 +1,4 @@
-package Inheritance.Enum;
+package Inheritance.enum_;
 
 enum Size {
     SMALL("S"), MEDIUM("M"), LARGE("L"), EXTRA_LARGE("XL");

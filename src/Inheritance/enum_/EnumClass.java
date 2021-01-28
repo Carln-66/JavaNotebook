@@ -1,4 +1,4 @@
-package Inheritance.Enum;
+package Inheritance.enum_;
 
 import java.util.Scanner;
 
