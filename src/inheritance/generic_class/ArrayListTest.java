@@ -1,6 +1,6 @@
-package Inheritance.generic_class;
+package inheritance.generic_class;
 
-import Inheritance.object_class.Employee;
+import inheritance.object_class.Employee;
 
 import java.util.ArrayList;
 

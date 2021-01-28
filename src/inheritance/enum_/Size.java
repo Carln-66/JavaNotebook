@@ -1,4 +1,4 @@
-package Inheritance.enum_;
+package inheritance.enum_;
 
 enum Size {
     SMALL("S"), MEDIUM("M"), LARGE("L"), EXTRA_LARGE("XL");

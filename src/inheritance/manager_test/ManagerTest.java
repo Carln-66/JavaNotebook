@@ -1,4 +1,4 @@
-package Inheritance.manager_test;
+package inheritance.manager_test;
 
 public class ManagerTest {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package Inheritance.manager_test;
+package inheritance.manager_test;
 
 public class Manager extends Employee {     //利用extends调用超类Employee类
 

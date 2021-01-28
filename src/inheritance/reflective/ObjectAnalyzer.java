@@ -1,4 +1,4 @@
-package Inheritance.reflective;
+package inheritance.reflective;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Array;

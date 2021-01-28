@@ -1,4 +1,4 @@
-package Inheritance.reflective;
+package inheritance.reflective;
 
 import java.util.ArrayList;
 

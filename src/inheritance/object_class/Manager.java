@@ -1,4 +1,4 @@
-package Inheritance.object_class;
+package inheritance.object_class;
 
 public class Manager extends Employee
 {
