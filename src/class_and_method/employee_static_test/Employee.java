@@ -44,7 +44,7 @@ class Employee {
     }
 
     public static void main(String[] args) {
-        var e = new Employee("Harry", 50000);
-        System.out.println(e.getName() + " " + e.getSalary());
+//        var e = new Employee("Harry", 50000);
+//        System.out.println(e.getName() + " " + e.getSalary());
     }
 }
