@@ -86,20 +86,20 @@ public class ParamTest {
 
         //测试2：Methods can cahnge the state of object parameters
         System.out.println("测试三倍工资");
-        var harry = new Employee("Harry", 50000);
-        System.out.println("更改前，工资为：" + harry.getSalary());
-        tripleSalary(harry);
-        System.out.println("更改后，工资为：" + harry.getSalary());
+//        var harry = new Employee("Harry", 50000);
+//        System.out.println("更改前，工资为：" + harry.getSalary());
+//        tripleSalary(harry);
+//        System.out.println("更改后，工资为：" + harry.getSalary());
 
         //测试3：Methods can't attach new objects to object parameters
         System.out.println("测试交换：");
-        var a = new Employee("Alice", 70000);
-        var b = new Employee("Bob", 60000);
-        System.out.println("更改前：a = " + a.getName());
-        System.out.println("更改前：b = " + b.getName());
-        swap(a, b);
-        System.out.println("更改后：a = " + a.getName());
-        System.out.println("更改后：b = " + b.getName());
+//        var a = new Employee("Alice", 70000);
+//        var b = new Employee("Bob", 60000);
+//        System.out.println("更改前：a = " + a.getName());
+//        System.out.println("更改前：b = " + b.getName());
+//        swap(a, b);
+//        System.out.println("更改后：a = " + a.getName());
+//        System.out.println("更改后：b = " + b.getName());
     }
 
 
