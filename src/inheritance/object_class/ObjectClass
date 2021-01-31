@@ -23,7 +23,7 @@
         . . .
         public boolean equals(Object otherObject)
         {
-        //a quick test to see if the objects are identical
+        //a quick junit_test to see if the objects are identical
         if (this == otherObject) return true;
 
         //must return false if the explicit parameter is null
@@ -36,7 +36,7 @@
         //now we know otherObject is a non-null Employee
         Employee other = (Employee) otherObject;
 
-        //test whether the fields have identical values
+        //junit_test whether the fields have identical values
         return name.equals(other,name)
         && salary == other.salary
         && hireDay.equals(other.hireDay);
