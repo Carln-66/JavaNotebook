@@ -350,8 +350,8 @@ e. 嵌套循环
 内层元素的初始化值为：不能调用，否则报错
 
 #### 3.3.7 二维数组的内存结构
-![二维数组的内存结构](https://img2020.cnblogs.com/i-beta/1505310/202003/1505310-20200311014312396-524712982.png)
-*引用自博客园用户@林淼零，侵删*
+![二维数组的内存结构](https://img-blog.csdnimg.cn/20200221165644893.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNzcxMDk2,size_16,color_FFFFFF,t_70)
+*引用自CSDN用户@Kafka_Hive_Flink，侵删*
 
 ### 3.4 数组的常见算法
 #### 3.4.1 数组的创建与元素赋值
