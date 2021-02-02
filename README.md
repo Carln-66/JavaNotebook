@@ -906,7 +906,120 @@ import：导入
 #### 5.5.6 多态性使用的注意点
 对象的多态性，只适用于方法，不适用于属性(编译和运行都看左边)
 
+#### 5.6.7 关于向上转型和向下转型
+1. 向上转型：多态
+2. 向下转型  
+2.1 为什么使用向下转型：有了对象的多态性以后，内存中实际上是加载了子类特有的属性和方法的，但是由于变量声明为父类类型，导致编译时只能调用父类声明的属性和方法。子类特有的属性和方法不能调用。  
+如何才能调用子类特有的属性和方法：使用向下转型。  
+2.2 如何实现向下转型  
+使用强制类型转换符：( )  
+2.3 使用时注意的点  
+使用强制类型转换时，可能出现ClassCastException的异常。为了避免在向下转型时出现此异常，我们在向下转型之前，先进行instanceof判断，一旦返回true，就进行向下转型。如果返回false，不进行向下转型。  
+2.4 instanceof的使用  
+a instanceof A：判断对象a是否是对象A的实例。如果是，返回true；如果不是，返回false。  
+如果a instanceof A返回true，则a instanceof B也返回true。其中类B是类A的父类。  
+要求a所属的类与类A必须是子类和父类的关系，否则编译错误。  
 
+----
+对多态性的理解：  
+ + 实现代码的通用性
+ + Object类中定义的public boolean equals(Object obj){ }  
+ JDBC：使用java程序操作(获取数据库连接、CRUD)数据库(MySQL、Oracle、DB2、SQL Server)
+ + 抽象类和接口的使用，如果没有多态性，这两部分就没有意义。(抽象类、接口不能实例化)
+
+多态是编译时行为还是运行时行为？
+运行时行为
+````
+    public static void main(String[] args){
+        int key = new Random().nextInt(3);
+        System.out.println(key);
+        Animal animal = getInstance(key);
+        animal.eat();
+    }
+````
+ 
+### 5.6 Object类的使用
+#### 5.6.1 java.lang.Object类的说明
++ Object类是所有java类的根父类
++ 如果在类的生命中未使用extends关键字指明其父类，则默认父类为java.lang.Object类
++ Object类中的功能(属性、方法)具有通用性
+    + 属性：无
+    + 方法：equals() / toString() / getClass() / hashCode() / clone() / finalize() / wait() / notify()、notifyAll()
++ Object类只声明了一个空参的构造器
+**数组可以看为一个特殊的类**
+#### 5.6.2 equals()方法
+##### 5.6.2.1 equals()方法的使用
++ equals是一个方法，而非运算符
++ 只能适用于引用数据类型
++ Object类中equals( )的定义
+````
+    public boolean equals(Object obj){
+        return (this == obj);
+    }
+````
+*说明Object类中定义的equals( )和==的作用是相同的：比较两个对象的地址值是否相同。即两个引用是否指向同一个对象实体*  
++ 像String、Date、File、包装类等都重写了Object类的equals( )方法。重写以后，比较的不是两个引用的地址是否相同，而是**比较两个对象的"实体内容"是否相同**
++ 通常情况下，我们自定义的类如果使用equals( )的话，也通常是比较两个对象的"实体内容"是否相同。那么我们就需要对Object类中的equals( )进行重写。
+    + 重写的原则：比较两个对象的实体内容是否相同。
+##### 5.6.2.2 如何重写equals( )
+手动重写举例  
+````
+    class User{
+        String name;
+        int age;
+        //重写equals()方法
+        public boolean equals(Object obj){
+            if (obj == this){
+                return true;
+            }
+            if (obj instanceof User){
+                User u = (User)obj;
+                return this.age == u.age && this.name.equals(u.name);
+            }
+        return false;
+        }
+    }
+````  
+*但是手动重写的equals方法并不完善，例如两个相同属性值的对象属于子父类关系时，instanceof方法判断的值为true，但在实际中我们希望判断值为false。而自动生成的方法会使用getClass方法判断两个对象是否属于同一个类，这样判断的返回结果就是false了*
+开发中如何实现：自动生成
+##### 5.6.2.3 回顾==运算符的使用
++ 可以在使用基本数据类型变量和引用数据类型变量中
++ 如果比较的是基本数据类型变量：比较两个变量保存的数据地址是否相等(不一定类型要相同)  
+如果比较的是引用数据类型变量：比较两个对象的地址值是否相同。即两个引用是否指向同一个对象实体。
++ ==符号使用时，必须保证符号左右两边的变量类型一致。
+#### 5.6.3 toString方法
+##### 5.6.3.1 toString( )的使用
++ 当我们输出一个对象的引用时，实际上就是调用当前对象的toString( )
++ Object类中toString( )的定义：
+````
+    public String toString(){
+        return getClass.getName() + "@" + Integer.toHexString(hashCode());
+    } 
+````
++ 像String、Date、File、包装类等都重写了Object类中的toString( )方法。使得在调用对象的toString( )时，返回实体内容信息。
++ 自定义类也可以重写toString( )方法，调用此方法时，返回对象的实体内容。  
+
+*注：当定义一个名为a的String型的对象，并赋值为null时，调用a.toString()会出现空指针异常(NullPointerException)，而正常打印结果System.out.println(a);则可以正常输出null。  
+其原因是Object类中print方法的一种保护机制。具体参见源码*
+````
+    public void print(String s){
+        if (s == null){
+            s = "null";
+        }
+        write(s);
+    }
+````
+##### 5.6.3.2 如何重写toString( )
+````
+    @Override
+    public String toString(){
+        return "Customer [name = " + name + ", age = " + age + "]"
+    }
+````
+----
+题目：  
+1. final、finally、finalize的区别
+2. ==和equals的区别
 
 
 
