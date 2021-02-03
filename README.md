@@ -466,7 +466,7 @@ array引用没有指向实体，却在操作实体中的元素时产生。
 #### 4.1.1 面向对象的三天条主线
 1. Java类及类的成员：属性、方法、构造器、代码块、内部类
 2. **面向对象的三大特征**：封装性、继承性、多态性
-3. 其他关键字：this、super、static、final、abstract、interface、package、import
+3. 其他关键字：this、super、static、final、abstract、interface_test、package、import
 #### 4.1.2 面向对象与面向过程
 1. 面向过程：强调的是功能行为，以函数为最小单位，考虑如何去做。
 2. 面向对象：强调具备了功能的对象，以类/对象为最小单位，考虑由谁来做。 
@@ -1234,3 +1234,247 @@ d 有了对象以后，可以通过"对象.属性"或"对象.方法"的方式进
 3.2 final修饰局部变量：尤其是使用final修饰形参时，表名此形参是一个常量。当我们调用此方法时，给常量形参赋一个实参。一旦赋值以后，就只能在方法体内使用此形参，但不能重新赋值。
 
 *static final用来修饰属性：全局常量*
+
+### 6.5 关键字：abstract
+#### 6.5.1 可以用来修饰
+类、方法
+#### 6.5.2 具体的
+abstract修饰的类：抽象类  
++ 此类不能实例化
++ 抽象中一定有构造器，便于子类实例化时调用(设计子类对象实例化的全过程)
++ 开发中，都会提供抽象类的子类，让子类对象实例化，完成相关的操作--->抽象的使用前提：继承性  
+
+abstract修饰方法：抽象方法  
++ 抽象方法只有方法的声明，没有方法体
++ 包含抽象方法的类，一定是一个抽象类。繁殖，抽象类中可以没有抽象方法。
++ 只有当子类重写了父类中所有的抽象方法后，此子类才可以实例化
++ 若子类没重写父类中所有的抽象方法，则此子类也是一个抽象类，需要用abstract修饰。
+
+#### 6.5.3 注意点
+1. abstract不能用来修饰属性、构造器等结构  
+2. abstract不能用来修饰私有方法、静态方法、final的方法、final的类
+
+----
+### 模板方法的设计模式
+#### 1. 解决的问题
+在软件开发中实现一个算法时，整体步骤很固定、通用，这些步骤已经在父类中写好了。但是某些部分易变，易变部分可以抽象出来，供不同子类实现。这就是一种模板模式
+#### 2. 举例
+````
+public class TemplateTest {
+    public static void main(String[] args) {
+        Template t = new SubTemplate();
+        t.spendTime();
+    }
+}
+
+abstract class Template {
+    //计算一段代码代码执行索要花费的的时间
+    public void spendTime() {
+        long start = System.currentTimeMillis();
+        code();     //不缺定的部分，易变的部分。所以需要定义抽象
+        long end = System.currentTimeMillis();
+        System.out.println("花费的时间为：" + (end - start));
+    }
+
+    public abstract void code();
+}
+
+class SubTemplate extends Template {
+
+    @Override
+    public void code() {
+        for (int i = 2; i <= 1000; i++) {
+            boolean isFlag = true;
+            for (int j = 2; j <= Math.sqrt(i); j++) {
+                if (i % j == 0) {
+                    isFlag = false;
+                    break;
+                }
+            }
+            if (isFlag) {
+                System.out.println(i);
+            }
+        }
+    }
+} 
+````
+#### 3. 应用场景
++ 数据库访问的封装
++ Junit单元测试
++ JavaWeb的Servlet中关于doGet/doPost方法调用
++ Hibernate中模板程序
++ Spring中JDBCTemlate、HibernateTemplate等
+
+----
+
+### 6.6 关键字：interface
+#### 6.6.1 使用说明
+1 接口使用interface来定义  
+2 Java中，接口和类是并列的两个结构  
+3 如何定义接口：定义接口中的成员  
+3.1 JDK7以前：只能定义全局常量和抽象方法  
++ 全局常量：public static final(但是，书写时可以省略不写)  
++ 抽象方法：public abstract  
+
+3.2 JDK8：除了定义全局常量和抽象方法之外，还可以定义静态方法、默认方法  
+4. 接口中不能定义构造器！这意味着接口不能实例化。  
+5. Java开发中，接口都通过让类去实现(implements)的方式使用。  
++ 如果实现类覆盖了接口中的所有抽象方法，则此实现类就可以实例化。  
++ 如果实现类没有覆盖接口中所有的抽象方法，则此实现类仍为一个抽象类  
+6. Java类可以实现多个接口--->弥补了Java单继承性的局限  
+> 格式： class AA extends BB implements CC, DD, EE...  
+7. 接口与接口之间可以继承，且可以多继承  
+*********************************************
+8. 接口的具体使用：体现多态性  
+9. 接口实际上可看做是一种规范  
+ 
+#### 6.6.2 举例
+````
+class interface_test.Computer{     
+    public void transferData(interface_test.USB usb){  //interface_test.USB usb = new interface_test.Flash();
+        usb.start();
+        System.out.println("具体传输数据的细节");
+        usb.stop();
+    }
+}
+
+interface interface_test.USB{
+    //常量：定义了长、款、最大最小的涮熟速度等
+    void start();
+    void stop();
+}
+
+class interface_test.Flash implements interface_test.USB{
+
+    @Override
+    public void start() {
+        System.out.println("U盘开始工作");
+    }
+
+    @Override
+    public void stop() {
+        System.out.println("U盘结束工作");
+    }
+}
+
+class interface_test.Printer implements interface_test.USB{
+
+    @Override
+    public void start() {
+        System.out.println("打印机开启工作");
+    }
+
+    @Override
+    public void stop() {
+        System.out.println("打印机结束工作");
+    }
+}
+````
+#### 6.6.3 体会面向接口的思想
+面向接口编程：我们在应用程序中调用的结构都是JDBC中定义的接口，不会出现具体某一个数据库厂商的API。
+#### 6.6.4 Java8中关于接口的新规范
++ 接口中的静态方法只能通过接口来调用
++ 通过实现类的对象，可以调用接口中的默认方法
+    + 如果实现类重写了接口中的默认方法，调用时，仍然调用的是重写以后的方法
++ 如果子类(或实现类)继承的父类实现的接口中声明了同名同参数的方法，那么子类在没有重写此方法的情况下，
+    + 默认调用的时父类中的同名同参数的方法--->类优先原则
++ 如果实现类实现了多个接口，而这多个接口中定义了同名同参数的默认方法，那么在实现类中没有重写此方法的情况下，报错。--->接口冲突  
+    + 这需要我们在实现类中必须重写此方法
+----
+如何在子类(或实现类)的方法中调用父类、接口中被重写的方法
+> method( );  //调用自己重写的方法  
+> super.method( );    //调用父类中重写的方法  
+> InterfaceJava8.super.method( );     //调用接口中的默认方法
+
+抽象类和接口的异同？  
+相同点：不能实例化；都可以包含抽象方法。  
+不同点：  
+1. 抽象类和接口(Java7, Java8, Java9)的定义、内部结构解释说明
+2. 类：单继承性   接口： 多继承  
+类与接口：多实现
+   
+----
+### 代理模式
+#### 1. 解决的问题
+代理模式时Java开发中使用比较多的一种设计模式。代理设计就是为其他对象提供一种代理，以控制对这个对象的访问。  
+#### 2. 应用场景
++ 安全代理：屏蔽对真实角色的直接访问
++ 远程代理： 通过代理类处理远程方法调用
++ 延迟加载：先加载轻量级的代理对象，真正需要在加载真实对象  
+分类：
++ 动态代理(静态定义代理类)
++ 动态代理(动态生成代理类)
+
+### 6.7 类的结构：内部类
+#### 6.7.1 定义
+Java中允许将一个类A声明在另一个类B中，则类A就是内部类，类B称为外部类。
+#### 6.7.2 内部类的分类
++ 成员内部类(静态、非静态)
++ 局部内部类(方法内、代码块内、构造器内)
+#### 6.7.3 成员内部类的理解
+一方面，作为外部类的成员：  
++ 滴哦用外部类的结构
++ 可以被static修饰
++ 可以被4种不同的权限修饰  
+
+另外一方面，作为一个类：
++ 类内可以定义属性、方法、构造器等
++ 可以被final修饰，表示此类不能被继承。言外之意，不使用final，就可以被继承
++ 可以被static修饰
+#### 6.7.4 成员内部类
+1. 如何创建成员内部类的对象(静态的、非静态的)
+````
+    //创建静态的Dog实例(静态的成员内部类)
+    Person.Dog dog = new Person.Dog();
+    
+    //创建非静态的Bird实例(非静态的成员内部类)
+    //Person.Bird bird = new Person.Bird(); //错误的
+    Person p = new Person();
+    Person.Bird bird = p.new Bird();
+````
+2. 如何在成员内部类中调用外部类的结构
+````
+class Person{
+    String name = "小明";
+    //非静态成员内部类
+    class Bird{
+        String name = "杜鹃";
+
+        public void dispalay(String name){
+            System.out.println(name);   //方法的形参
+            System.out.println(this.name);   //内部类的属性
+            System.out.println(Person.this.name);   //外部类的属性        
+        }
+    }  
+}
+````
+#### 6.7.5 局部内部类的使用
+````
+    return new Comparable(){
+    
+        @Override
+        public int compareTo(Object o){
+            return 0;
+        }
+    }
+````
+*注意点：在局部内部类的方法中(比如：show)，如果调用局部内部类所声明的方法种的局部变量的话，要求此局部变量声明为final*
+````
+//举例
+    public void method(){
+        //局部变量
+        int num = 10;   //JDK7之前版本需显式声明num为final，JDK8及以后版本不需要，但默认其还是一个final的。这是一个规定。
+        
+        class AA{
+            public void show(){
+                num = 20;   //报错：final值不允许修改
+                System.out.println(num);
+            }
+        }
+    }
+````
+
+总结：成员内部类和局部内部类在编译后，都会生成class文件。  
+格式：  
+成员内部类：外部类$内部类名.class  
+局部内部类：外部类$ 内部类名.class
