@@ -1478,3 +1478,204 @@ class Person{
 格式：  
 成员内部类：外部类$内部类名.class  
 局部内部类：外部类$ 内部类名.class
+
+## 7. 异常处理
+### 7.1 异常
+#### 7.1.1 异常的体系结构
+![java异常的体系结构](https://img-blog.csdn.net/20150107221255554?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZGQ4NjQxNDAxMzA=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)  
+*引用自CSDN用户@LiZhen798*  
+#### 7.1.2 从程序的执行过程，看编译时异常和运行时异常
+编译时异常：执行javac.exe命名时，可能出现的异常  
+运行时异常：执行java.exe命令时，可能出现的异常
+#### 7.1.3 常见的异常类型，举例
+````
+    /***********编译时异常***********/
+    @Test
+    public void test7(){
+        File file = new File("hello.txt");
+        FileInputStream fis = new FileInputStream(file);
+        int data = fis.read();
+        while(data!=-1){
+            System.out.println((char) data);
+            data = fis.read();
+        }
+        fis.close();
+    }
+    /***********运行时异常***********/
+    //ArithmeticException
+    @Test
+    public void test6(){
+        int a = 10, b = 0;
+        System.out.println(a / b);
+    }
+
+    //InputMismatchException
+    @Test
+    public void test5(){
+        Scanner input = new Scanner(System.in);
+        int Demo = input.nextInt();
+        System.out.println(Demo);
+    }
+
+    //NumberFormatException
+    @Test
+    public void test4(){
+        String string = "abc";
+        int num = Integer.parseInt(string);
+    }
+
+    //ClassCastException
+    @Test
+    public void test3(){
+        Object obj = new Date();
+        String string = (String)obj;
+    }
+
+    //ArrayIndexOutOfBoundsException
+    @Test
+    public void test2(){
+        int array[] = new int[10];
+        System.out.println(array[10]);
+    }
+
+    //NullPointerException
+    @Test
+    public void test1(){
+        int[] arr = null;
+        System.out.println(arr[3]);
+
+        String string = null;
+        System.out.println(string.charAt(0));
+    }
+
+````
+
+### 7.2 异常处理
+#### 7.2.1 java异常处理的抓抛模型
+过程一："抛"： 程序在正常的执行过程中，一旦出现异常，就会在异常代码出生成一个对应异常类的对象，并将此对象抛出。  
+一旦抛出对象，其后的代码便不再执行。  
+关于异常的产生：  
+1. 系统自动生成的异常对象  
+2. 手动的生成一个异常对象并抛出(throw)  
+
+过程二："抓"：可以理解为异常处理的两种方式：  
+1. try-catch-finally  
+2. throws  
+
+#### 7.2.2 异常的处理方式一：try-catch-finally
+1. try-catch-finally的使用
+````
+    try{
+        //可能出现异常的代码
+    }catch(异常类型1 变量名1){
+        //处理异常的方式1
+    }catch(异常类型2 变量名2){
+        //处理异常的方式2
+    }catch(异常类型3 变量名3){
+        //处理异常的方式3
+    }
+    ......
+    finally{
+    //一定会执行的代码
+    }
+````
+说明：
+1. finally时可选的，不一定要写  
+2. 使用try将可能出现异常的代码包装起来，执行过程中，一旦出现异常，就会生成一个对应异常类的对象。根据此对象的类型，去catch种进行匹配。  
+3. 一旦try中的对象匹配到某一个catch时，就进入catch中进行异常的处理。一旦处理完成，就跳出当前的try-catch结构(在没有写finally的前提下)，继续执行后面的代码。  
+4. catch中的异常类型如果没有子父类关系，则谁声明在上，谁声明在下没有影响。 catch中的异常类型如果满足子父类关系，则要求子类一定声明在父类的上面，否则报错。  
+5. 常用的异常对象处理方式：  
+   5.1 String getMessage( )      
+   5.2 printStackTrace( )  
+6. 在try结构中声明的变量，除了try结构就不能调用了。可以在try结构体外先声明变量，并赋默认值，即可在结构外调用该变量。
+7. try-catch-finally结构可以嵌套。  
+
+总结1：使用try-catch-finally处理编译时异常，使得程序在编译时就不再报错，但是运行时仍有可能报错。相当于我们使用try-catch-finally将一个编译时可能出现的异常延迟到运行时出现。  
+总结2：开发时，由于运行时异常比较常见，所以我们通常不针对运行时异常编写try-catch-finally。针对于编译时异常，一定要考虑异常的处理。  
+2. finally的再说明   
+2.1 finally是可选的  
+2.2 finally声明的是一定会被执行的代码。即使catch中又出现异常了，或者try中有return语句，catch中有return语句等情况。  
+2.3 像数据库连接、输入输出流、网络编程Socket等资源，JVM是不能自动回收的，需要自己手动进行资源释放。此时的资源释放，就需要声明在finally中。  
+3. final、finally、finalize区别
+类似：  
+   throw和throws  
+   Collection和Collections   
+   String、StringBuffer、StringBuilder  
+   ArrayList、LinkedList  
+   HashMap、LinkedHashMap  
+   重写和重载  
+   
+结构不相似：  
+抽象类、接口  
+==、equals( )
+sleep( )、wait
+#### 7.2.3 异常处理方式二
+"throws + 异常类型“此方法在执行时，可能会抛出异常类型。一旦当方法体执行时，出现异常，仍会在异常代码处生成一个异常类的对象，此对象满足throws后面的异常类型时，就会被抛出。异常代码后的代码将不再执行。
+
+#### 7.2.4 对比两种处理方式
+try-catch-finally：真正的处理掉了异常  
+throws：只是将异常抛给了方法的调用者，并没有将异常真正的处理掉。  
+#### 7.2.5 开发中如何选择异常处理方式
+开发中如何选择使用try-catch-finally  还是使用throws  
++ 如果父类中被重写的方法没有throws方式处理异常，则子类重写的方法也不能使用throws，意味着如果子类重写的方法中有异常，必须使用try-catch-finally方式处理。  
++ 执行的方法A中，又先后调用了另外几个方法，这几个方法是递进关系执行的。建议这几个方法使用throws方式进行处理。而执行的方法A可以考虑使用try-catch-finally方式进行处理。
+
+方法重写的规则之一  
+子类重写的方法抛出的异常类型不大于父类被重写的方法抛出的异常类型。  
+
+### 7.3 手动抛出异常对象
+#### 7.3.1 使用说明
+在程序执行中，除了自动抛出异常对象的情况之外，还可以手动的throw一个异常类的对象。
+#### 7.3.2 问题
+throw和throws的区别  
+throw表示抛出一个异常类的对象，生成异常对象的过程。声明在方法内。
+throws属于异常处理的一种方式，声明在方法的声明处
+#### 7.3.3 举例
+````
+public class StudentTest {
+    public static void main(String[] args) {
+        try {
+            Student s = new Student();
+            s.register(-10001);
+            System.out.println(s);
+        } catch (Exception e) {
+//            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+    }
+}
+
+class Student {
+    int id;
+    public void register(int id) throws Exception {
+        if (id > 0) {
+            this.id = id;
+        } else {
+//            System.out.println("输入非法");
+            //手动抛出异常对象
+//            throw new RuntimeException("您的输入非法！");
+//            throw new Exception("您的输入非法！");
+        throw new MyException("不能输入负数");
+        }
+    }
+}
+````
+
+### 7.4 自定义异常类
+#### 7.4.1 如何自定义异常类
+1. 继承于现有的异常结构：RuntimeException、Exception  
+2. 提供全局变量：serialVersionUID
+3. 提供重载构造器
+````
+public class MyException extends RuntimeException{
+    static final long serialVersionUID = -7034897190735766939L;
+
+    public MyException(){
+
+    }
+
+    public MyException(String msg){
+        super(msg);
+    }
+}
+````
