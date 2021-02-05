@@ -1,5 +1,6 @@
 package exceptions;
 
+
 import org.junit.Test;
 
 /**

@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/JavaAdvance/JavaAdvance.iml" filepath="$PROJECT_DIR$/JavaAdvance/JavaAdvance.iml" />
       <module fileurl="file://$PROJECT_DIR$/JavaBasic/JavaBasic.iml" filepath="$PROJECT_DIR$/JavaBasic/JavaBasic.iml" />
       <module fileurl="file://$PROJECT_DIR$/JavaNotebook.iml" filepath="$PROJECT_DIR$/JavaNotebook.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaSenior/JavaSenior.iml" filepath="$PROJECT_DIR$/JavaSenior/JavaSenior.iml" />
     </modules>
   </component>
 </project>
