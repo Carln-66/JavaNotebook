@@ -11,6 +11,11 @@ package Thread.ThreadDoc;
  *              5. 通过Thread类的对象调用start()
  *
  *              比较创建线程的两种方式
+ *              开发中，优先选择：实现Runnable接口的方式
+ *              原因：1. 实现的方式没有类的单继承的局限性
+ *                   2. 实现的方式更适合来处理多个线程有共享数据的情况
+ *          联系：Thread类也是实现了Runnable接口
+ *          相同点：两种方式都需要重写run()，将线程要执行的逻辑声明在run()中
  */
 public class ThreadTest1 {
     public static void main(String[] args) {

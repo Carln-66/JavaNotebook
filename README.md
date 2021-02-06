@@ -1,5 +1,5 @@
 # JavaNotebook
-**Carl的java笔记本**
+## **Carl的java笔记本**
 
 ## 1. Java语言概述
 ### Java三大特点
@@ -1679,3 +1679,136 @@ public class MyException extends RuntimeException{
     }
 }
 ````
+
+## 8. 多线程
+### 8.1 程序、进程、线程的理解
+#### 8.1.1 程序(Program)
+概念：是为了完成特定任务，用某种语言编写的一组指令的集合。指一段**静态的代码**。
+#### 8.1.2 进程(process)
+概念：程序的一次执行过程，或是*正在运行的一个程序**。  
+说明：**进程作为资源分配的单位**，系统在运行时会为每个进程分配不同的内存区域。   
+每个线程拥有自己独立的栈和程序计数器。  
+多个线程贡献同一个进程中的结构：方法区、堆。  
+#### 8.1.3 线程(thread)
+进程可以细化为多个线程。  
+概念：进程可以进一步细化为线程，是一个程序内部的一条执行路径。  
+说明：线程作为调度和执行的单位，每个线程拥有独立的运行栈和程序计数器(pc)，线程切换的开销小。
+
+### 8.2 并行与并发
+#### 8.2.1 单核CPU与多核CPU的理解
++ 单核CPU，其实是一种假的多线程，因为在一个时间单元内，也只能执行一个线程的任务。例如：虽然有多车道，但是收费站只有一个工作人员在收费，只有收了费才能通过，那么CPU就好比收费人员。如果某个人不想交钱，那么收费人员可以把它"挂起"(防着他不管，等他准备好交钱再去收费)，但是因为CPU时间单元特别短，因此感觉不出来。
++ 如果视多核的话，才能更好的发挥多线程的效率
++ 一个java应用程序java.exe，其实至少有三个线程：main()主线程,gc()垃圾回收线程，异常处理线程。当然如果发生异常会影响主线程。   
+#### 8.2.2 并行与并发的理解
++ 并行：多个CPU同时执行多个任务。比如：多个人同时做不同的事。
++ 并发： 一个CPU(采用时间片)同时执行多个任务。
+### 8.3 创建多线程的两种方式
+#### 方式一：继承Thread类的方式
+````
+    //1. 创建一个继承于Thread类的子类
+    class MyThread extends Thread{
+
+        //2. 重写Thread类中的run()
+    @Override
+    public void run(){
+        for (int i = 1; i < 10000; i++) {
+            if (i % 2 == 0){
+                System.out.println(i);
+            }
+
+        }
+    }
+}
+public class ThreadTest{
+    public static void main(String[] args) {
+        //3. 创建Thread子类的对象
+        MyThread thread = new MyThread();
+
+        //4. 通过此对象调用start()
+        /*
+        * 1. 启动当前线程
+        * 2. 调用当前线程的run()
+        * */
+        thread.start();
+
+        //在main线程中执行
+        for (int i = 1; i < 10000; i++) {
+            if (i % 2 == 0){
+                System.out.println(i + "************************");
+            }
+        }
+    }
+}
+````
+说明两个问题：  
+问题一：我们启动一个线程，必须调用start()，不能调用run()的方式启动线程。  
+问题二：如果再启动一个线程，必须重新创建一个Thread子类的对象，调用此对象的start方法。  
+#### 方式二
+````
+public class ThreadTest1 {
+    public static void main(String[] args) {
+        //3. 创建实现类的对象
+        MThread mThread = new MThread();
+        //4. 将此对象作为参数传递到Thread类的构造器中，创建Thread对象
+        Thread thread = new Thread(mThread);
+        //5. 通过Thread类的对象调用start()
+        thread.setName("线程一");
+        thread.start();
+
+        //再启动一个线程，遍历100以内的偶数
+        Thread thread1 = new Thread(mThread);
+        thread1.setName("线程二");
+        thread1.start();
+    }
+}
+
+//1. 创建一个实现了Runnable接口的类
+class MThread implements Runnable{
+
+    //2. 实现类去实现Runnable中的抽象方法: run()
+    @Override
+    public void run() {
+        for (int i = 0; i < 100; i++) {
+            if (i % 2 == 0){
+                System.out.println(Thread.currentThread().getName() + ": " + i);
+            }
+        }
+    }
+}
+````
+
+两种方式的对比：  
+比较创建线程的两种方式  
+开发中，优先选择：实现Runnable接口的方式  
+原因：
+1. 实现的方式没有类的单继承的局限性  
+2. 实现的方式更适合来处理多个线程有共享数据的情况  
+
+联系：Thread类也是实现了Runnable接口  
+相同点：两种方式都需要重写run()，将线程要执行的逻辑声明在run()中  
+   目前这两种方式启动线程所调用的都是Thread类中的start()方法。  
+
+### 8.4 Thread类中的常用方法
+1. start()：启动当前线程；调用当前线程的run()
+2. run():通常需要重写Thread类中的此方法，将创建的线程需要执行的操作声明在此方法中
+3. currentThread()：静态方法，返回当前代码的线程
+4. getName()：获取当前线程名字
+5. setName()：设置当前线程的名字
+7. join()：在线程a中调用线程b的join()，此时线程a进入阻塞状态，直到线程b完全执行完之后，线程a才结束阻塞状态。
+8. stop()：已过时。当执行此方法时，强制结束当前线程。
+9. sleep(long millisecond)：让当前线程"睡眠"指定的millisecond毫秒。在指定的millisecond毫秒时间内，当前线程是阻塞状态。
+10. isAlive()：判断当前线程是否存活。
+
+线程的优先级
+1. MIN_PRIORITY: 1
+2. NORM_PRIORITY: 5 ---> 默认优先级
+3. MAX_PRIORITY: 10
+
+如何获取和设置当前线程的优先级  
+getPriority()：获取线程的优先级  
+setPriority()：设置线程的优先级  
+说明：高优先级的线程要抢占低优先级线程cpu的执行权。但是只是从概率上讲，高优先级的线程高概率情况下被执行。并不意味着只有当高优先级的线程执行完以后，低优先级的线程才执行。
+
+线程通信：wait() / notify() / notifyAll()：此三个方法是定义在Object类中的。  
+
+
