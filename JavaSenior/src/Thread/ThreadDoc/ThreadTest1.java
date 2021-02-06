@@ -9,6 +9,8 @@ package Thread.ThreadDoc;
  *              3. 创建实现类的对象
  *              4. 将此对象作为参数传递到Thread类的构造器中，创建Thread类的对象
  *              5. 通过Thread类的对象调用start()
+ *
+ *              比较创建线程的两种方式
  */
 public class ThreadTest1 {
     public static void main(String[] args) {
