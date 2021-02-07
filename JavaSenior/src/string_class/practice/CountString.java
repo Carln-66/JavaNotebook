@@ -12,23 +12,21 @@ public class CountString {
 
     public int test(String s1, String s2) {
 
-        if (s2.length() >= s1.length()) {
-            int count = 0;
-            int index = 0;
-            // while((index = mainStr.indexOf(subStr)) != -1){
-            // count++;
-            // mainStr = mainStr.substring(index + subStr.length());
-            // }
-            // 改进：
-            while ((index = s2.indexOf(s1, index)) != -1) {
-                index += s1.length();
-                count++;
-            }
-            return count;
-        } else {
-            return 0;
+        int count = 0;
+        int index = s2.indexOf(s1);
+        // while((index = mainStr.indexOf(subStr)) != -1){
+        // count++;
+        // mainStr = mainStr.substring(index + subStr.length());
+        // }
+        // 改进：
+        while (index != -1) {
+            count++;
+            index = index + s1.length();
+            index = s2.indexOf(s1, index);
         }
+        return count;
     }
+
 
     @Test
     public void test1() {
