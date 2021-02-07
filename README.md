@@ -2199,3 +2199,97 @@ JDK1.8：字符串常量池存储在方法区(元空间)
 + 字符串变成字符数组。
 + 对数组排序，选择，冒泡，Arrays.sort(str.toCharArray());
 + 将排序后的数组变成字符串。
+
+### 9.2 StringBuffer、StringBuilder
+#### 9.2.1 String、StringBuffer、StringBuilder的区别
++ String：不可变的字符序列；底层使用char[ ]存储；  
++ StringBuffer：可变的字符序列；线程安全，但效率低；底层使用char[ ]存储  
++ StringBuilder：可变的字符序列；JDK5.0新增。线程不安全，效率高；底层使用char[ ]存储  
+
+#### 9.2.2 StringBuffer与StringBuilder的内存解析
+以StringBuffer为例：  
+源码分析：  
+````
+//正常情况下新建字符串
+String str = new String(); //new char[0];
+String str1 = new String("abc");    //new char[]{'a', 'b', 'c'};
+
+StringBuffer sb1 = new StringBuffer();  //new char[16]; 相当于底层创建了一个长度为16的数组
+System.out.println(sb.length());    
+sb1.append('a');    //value[0] = 'a';
+sb1.append('b');    //value[1] = 'b';
+
+StringBuffer sb2 = new StringBuffer("abc"); //char[] value = new char["abc".length() + 16];
+
+//问题一：System.out.println(sb2.length()); //3
+//问题二：扩容问题：如果需要添加的数据在底层容量不足，就需要对底层数组进行扩容。
+//       默认情况下，扩容为原来的2倍+2，同时将原数组的元素复制到新数组中。
+        
+//       指导意义：开发中建议使用：StringBuffer(int capacity)或StringBuilder(int capacity)
+````
+#### 9.2.3 对比String、StringBuffer、StringBuilder三者的执行效率
+从高到低：StringBuilder > StringBuffer > String
+#### 9.2.4 StringBuffer、StringBuilder中的常用方法
++ 增；append(xxx)
++ 删：delete(int start,int end)
++ 改：setCharAt(int n, char ch) / replace(int start, int end, String str)
++ 查：CharAt(int n)
++ 插：insert(int offset, xxx)
++ 长度：length()
++ 遍历：for() + charAt() / toString
+
+### 9.3 JDK8之前日期时间API
+#### 9.3.1 获取系统当前时间
+````
+        long time = System.currentTimeMillis();
+        //返回当前时间与1970年1月1日0时0分0秒之间以毫秒为单位的时间差
+        //称为时间戳
+````
+#### 9.3.2 java.uitl.Date类和java.sql.Date类
+````
+            /*
+        java.util.Date类
+            |----java.sql.Date类
+
+        1. 两个构造器的使用
+
+        2. 两个方法的使用
+            > toString()：显式当前的年月日时分秒时区
+            > getTime()：获取当前Date对象对应的毫秒数(时间戳)
+
+        3. java.sql.Date对应着数据库中的日期类型的变量
+            > 如何实例化
+            > 如何将java.util.Date对象转换为java.sql.Date对象
+
+         */
+    @Test
+    public void test2(){
+        //构造器一：Date()：创建一个对应当前时间的Date对象
+        Date date1 = new Date();
+        System.out.println(date1.toString());   //Sun Feb 07 15:12:03 CST 2021
+        System.out.println(date1.getTime());    //1612682021410
+
+        //构造器二：创建指定毫秒数的Date对象
+        Date date2 = new Date(1612682021410L);
+        System.out.println(date2.toString());
+
+        //创建java.sql.Date对象
+        java.sql.Date date3 = new java.sql.Date(54856453355453L);
+        System.out.println(date3.toString());
+
+        //如何将java.util.Date对象转换为java.sql.Date对象
+        //情况一
+        //Date date4 = new java.sql.Date(456476854534354L);
+        //java.sql.Date date = (java.sql.Date) date4;
+        //情况二
+        Date date6 = new Date();
+        java.sql.Date date7 = new java.sql.Date(date6.getTime());   //通过相同的毫秒数将java.util.Date对象转换为java.sql.Date对象
+        System.out.println(date7);
+    }
+````
+#### 9.3.4 java.text.SimpleDateFormat类
+
+
+
+
+
