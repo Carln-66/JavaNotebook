@@ -2136,7 +2136,7 @@ public void test1(){
 @Test
 public void test2(){
     String str1 = "abc123";     //题目：a21cb3
-    char[] cahrArray = str1.toCharArray();
+    char[] charArray = str1.toCharArray();
     for(int i = 0; i < charArray.length; i++){
         System.out.println(cahrArray[i]);
     }
