@@ -13,8 +13,6 @@ public class trimTest {
         System.out.println(s);
     }
 
-
-
 }
 
 class myTrimTest{
