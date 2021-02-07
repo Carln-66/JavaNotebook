@@ -1811,4 +1811,204 @@ setPriority()：设置线程的优先级
 
 线程通信：wait() / notify() / notifyAll()：此三个方法是定义在Object类中的。  
 
+### 8.5 Thread的生命周期
+#### 图示：  
+![线程的生命周期](https://img2018.cnblogs.com/blog/1223046/201907/1223046-20190722214114154-276488899.png)  
+*引用自博客园用户@Java蚂蚁*
+#### 说明
+1. 生命周期关注两个概念：状态、相应的方法
+2. 关注：状态a--->状态b：哪些方法执行了(回调方法)  
+某个方法主动调用：状态a--->状态b
+3. 阻塞：临时状态，不可以做为最终状态  
+死亡：最终状态
+   
+### 8.6 线程的同步机制
+#### 8.6.1 背景
+例子：创建一个窗口卖票，总票数为100张，使用时限Runnable接口的方式  
+1. 问题：买票过程中，出现了重票、错票--->出现了线程的安全问题  
+2. 问题出现的原因：当某个线程操作车票的过程中，尚未操作完成时，其他线程参与进来，也操作车票  
+3. 如何解决：当一个线程a在操作ticket的时候，其他线程不能参与进来。直到线程a操作完ticket时，其他线程才可以开始操作ticket。这种情况即使线程a出现了阻塞，也不能改变。
+#### 8.6.2 Java解决方案：同步机制
+java中，通过同步机制解决线程的安全问题  
+#### 方式一：同步代码块  
+> synchronized(同步监视器){  
+> //需要被同步的代码  
+> }  
 
+说明：操作共享数据的代码，即为需要同步的代码。--->不能够包含过多或过少代码  
+**共享数据**：多个线程共同操作的变量。如本例中的ticket。  
+**同步监视器**：俗称锁。任何一个类的对象都可以充当锁  
+要求：**多个线程必须要共用同一把锁**   
+补充：在实现Runnable接口创建多线程的方式中，我们可以考虑使用this充当同步监视器，在继承Thread类创建多线程的方式中，慎用this充当同步监视器，考虑使用当前类充当同步监视器。  
+
+#### 方式二：同步方法
+如果操作数据共享的代码完整的声明在一个方法中我们可以将此方法声明为同步的。
+同步的方式：解决了线程的安全问题。---好处  
+操作同步代码时只能有一个线程参与，其他线程等待，相当于是一个单线程的过程，效率低一些。 ---局限性  
+#####关于同步方法的总结
+1. 同步方法依然涉及到同步监视器，只是不需要显式的声明
+2. 非静态的同步方法，同步监视器时：this
+3. 对于静态方法，同步监视器是当前类本身
+
+#### 方式三：lock锁
+##### synchronized( )与Lock方法的异同  
+相同：都可以解决线程安全问题   
+不同：synchronized机制在执行完相应的同步代码以后，自动释放同步监视器  
+Lock需要手动的启动同步(lock( ))，同时结束同步也需要手动实现(unLock( ))  
+
+使用的优先顺序：Lock--->同步代码块(已经进入了方法体，分配了相应资源)--->同步方法(在方法体之外)
+
+#### 8.6.3 利弊
+利：同步的方式解决了线程的安全问题  
+弊：操作同步代码时，只能由一个线程参与，其他线程等待。相当于是一个单线程的过程，效率低。  
+
+#### 8.6.4 线程安全的单例模式(懒汉式)
+````
+public class Singleton {
+}
+
+class Bank {
+    private Bank() {
+    }
+
+    private static Bank instance = null;
+
+    public static synchronized Bank getInstance() {     //线程安全
+//        if (instance == null) {
+//            instance = new Bank();
+//        }
+//        return instance;
+
+        //效率更高
+        if (instance == null) {
+            if (instance == null) {
+                instance = new Bank();
+            }
+        }
+        return instance;
+    }
+}
+````
+
+#### 8.6.5 死锁
+死锁的理解：不同线程分别占用对方需要的同步资源不放弃，都在等待对方放弃自己需要的同步资源，就形成了线程的死锁。  
+使用同步时，要避免出现死锁。  
+
+### 8.7 线程通信
+#### 8.7.1 线程通信涉及到的三个方法
+* wait( ): 一旦执行此方法，当前线程就进入阻塞状态，并释放同步监视器。
+* notify( ): 一旦执行此方法，就会唤醒被wait的一个线程，如果有多个线程被wait，就唤醒优先级高的那个。
+* notifyAll( ): 一旦执行此方法，就会唤醒所有被wait的线程。
+
+#### 8.7.2 具体说明
+* wait( ), notify( ), notifyAll( )三个方法必须使用在同步代码块或同步方法中。
+* wait( ), notify( ), notifyAll( )三个方法的调用者必须是同步代码块或同步方法中的同步监视器。否则会出现IllegalMonitorStateException异常
+* wait( ), notify( ), notifyAll( )三个方法是定义在java.lang.Object包中的。
+
+#### 8.7.3 题目
+sleep和wait方法的异同  
+相同点：只要执行，就会使得当前的线程进入阻塞状态  
+不同点：
+1. 两个方法声明的位置不同：Thread类中声明sleep( )，Object类中声明wait( )  
+2. 调用的要求不同：sleep( )可以在任何需要的场景下调用。wait( )必须使用在同步代码块或同步方法之中  
+3. 关于是否释放同步监视器：如果两个方法都使用在同步代码块或同步方法中，sleep( )不会释放锁，wait( )会释放锁。  
+
+#### 8.7.4 小结
+释放锁的操作：  
++ 当前线程的同步方法、同步代码块执行结束
++ 当前线程在同步代码块、同步方法中遇到了break、return终止了该代码块、该方法的继续执行
++ 当前线程在同步代码块、同步方法中出现了未处理的Error或Exception，导致异常结束
++ 当前线程在同步代码块、同步方法中执行了线程对象的wait( )方法，当前线程暂停，并释放锁  
+
+不会释放锁的操作：  
++ 线程执行同步代码块或同步方法时，程序调用Thead.sleep( )、Thread.yield( )方法暂停当前线程执行。
++ 线程执行同步代码块时，其他线程调用了该线程的suspend( )方法将该线程挂起，该线程不会释放锁(同步监视器)。
+    + 应该尽量避免使用suspend( )和resume( )来控制线程
+    
+### 8.8 JDK5.0新增线程创建方式
+#### 新增方式一：实现Callable接口
+````
+class NumThread implements Callable{
+    //2. 实现call方法，将此线程需要执行的操作声明在call方法中
+    @Override
+    public Object call() throws Exception {
+        int sum = 0;
+        for (int i = 1; i < 100; i++) {
+            if (i % 2 ==0){
+                System.out.println(i);
+                sum += i;
+            }
+        }
+        return sum;
+    }
+}
+
+public class CallableTest {
+    public static void main(String[] args) {
+        //3. 创建Callable接口实现类的对象
+        NumThread numThread = new NumThread();
+        //4. 将此Callable接口实现类的对象作为参数传递到FutureTask构造器中，创建FutureTask的对象
+        FutureTask futureTask = new FutureTask(numThread);
+        //5. 将FutureTask类的对象作为参数传递到Thread类的构造器中，创建Thread对象，并调用start()。
+        new Thread(futureTask ).start();
+
+        try {
+            //6. 获取Callable中的call方法的返回值
+            //get方法的返回值即为FutureTask构造器Callable实现类重写的call的返回值
+            Object sum = futureTask.get();
+            System.out.println(sum);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+}
+````
+#### 说明
+如何理解实现Callable接口的方式创建多线程比实现Runnable接口创建多线程方式更强大？  
+1. call()方法可以有返回值  
+2. call()可以抛出异常，被外部操作捕获，获取异常信息  
+3. Callable支持泛型  
+
+#### 新增方式二：线程池
+````
+class NumberThread implements Runnable{
+
+    @Override
+    public void run() {
+        for (int i = 0; i <= 100; i++) {
+            if (i % 2 == 0){
+                System.out.println(Thread.currentThread().getName() + ": " + i);
+            }
+        }
+    }
+}
+
+public class ThreadPool {
+    public static void main(String[] args) {
+        //1. 提供指定线程数量的线程池
+        ExecutorService service = Executors.newFixedThreadPool(10);
+        ThreadPoolExecutor service1 = (ThreadPoolExecutor) service;     //强制转换
+        //设置线程池的属性
+        service1.setCorePoolSize(15);
+//        service1.setMaximumPoolSize();
+//        ...
+
+        //2. 执行指定的线程的操作。需要提供实现Runnable接口或Callable接口的实现类的对象
+        service.execute(new NumberThread());    //适用于Runnable
+//        service.submit();       //适用于Callable
+        service.shutdown();     //3. 关闭连接池
+    }
+}
+````
+#### 说明
+好处：  
+1. 提高响应速度(减少了创建新线程的时间)  
+2. 降低资源消耗(重复利用线程池中的线程，不需要每次都创建)  
+3. 便于线程管理  
+
+corePoolSize:核心池的大小  
+maximumPoolSize:最大线程数  
+keepAliveTime:线程没有任务时最多保持多长时间后会终止  
+...
