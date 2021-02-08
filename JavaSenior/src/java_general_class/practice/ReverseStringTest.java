@@ -1,4 +1,4 @@
-package string_class.practice;
+package java_general_class.practice;
 
 /**
  * @Auther: Carl

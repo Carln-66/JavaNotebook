@@ -1,4 +1,4 @@
-package string_class;
+package java_general_class.string_doc;
 
 import org.junit.Test;
 

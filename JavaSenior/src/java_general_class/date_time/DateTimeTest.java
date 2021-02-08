@@ -1,4 +1,4 @@
-package date_time;
+package java_general_class.date_time;
 
 import org.junit.Test;
 
