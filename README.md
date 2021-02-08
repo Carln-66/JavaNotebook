@@ -2643,7 +2643,7 @@ java.time.LocalDate与java.sql.Time|e Date.valueOf(localDate)|date.toLocalDate()
 #### 9.6.5 Math类
 java.lang.Math提供了一系列静态方法用于科学计算。其方法的参数和返回值类型一般为double型。
 
-#### 6.6.6 BigInteger、BigDecimal
+#### 9.6.6 BigInteger、BigDecimal
 ##### 说明
 + java.math包的BigInteger可以表示不可变的任意精度的整数。
 + 在商业计算中，要求数字精度比较高，故用到java.math.BigDecimal类。
