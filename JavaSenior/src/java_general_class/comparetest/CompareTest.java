@@ -23,7 +23,7 @@ public class CompareTest {
     @Test
     /*
     Comparable接口的使用举例：自然排序
-    1.  像String、包装类等实现了Comparable接口，重写了compareTo(obj)方法，给出了比较两个对象大小的方式
+    1. 像String、包装类等实现了Comparable接口，重写了compareTo(obj)方法，给出了比较两个对象大小的方式
     2. 像String、包装类重写ComparableTo()方法之后，进行了小到大的排列
     3. 重写CompareTo(obj)的规则:
         如果当前对象this大于形参对象obj，则返回正整数，
