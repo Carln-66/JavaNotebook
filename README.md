@@ -734,6 +734,7 @@ private < 缺省 < protected < public
 
 #### 4.5.2 属性赋值顺序
 
+
 a 默认初始化  
 b 显式初始化  
 c 构造器中初始化
@@ -2289,8 +2290,376 @@ StringBuffer sb2 = new StringBuffer("abc"); //char[] value = new char["abc".leng
         System.out.println(date7);
     }
 ````
-#### 9.3.4 java.text.SimpleDateFormat类
+#### 9.3.3 java.text.SimpleDateFormat类
+SimpleDateFormat的使用：SimpleDateFormat对日期Date类的格式化和解析
+##### 1. 两个操作：  
+##### 1.1 格式化： 日期---> 字符串  
+##### 1.2 解析： 格式化的逆过程，字符串 ---> 日期  
+##### 2. SimpleDateFormat的实例化：new+构造器
+````
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");  //以指定方式格式化
+        String s1 = simpleDateFormat.format(date);
+        System.out.println(s1);
 
+        //字符串必须为符合SimpleDateFormat识别的格式(通过构造器参数体现)，否则会抛异常
+        Date parse1 = simpleDateFormat.parse("2000年09月05日 23:59");
+        System.out.println(parse1);
+    }
+````
+
+##### 3. 练习
+````
+   @Test
+    //字符串"2021-02-28"转换为java.sql.Date
+    public void test2() throws ParseException {
+        Date date = new Date();
+        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
+        Date parse2 = simpleDateFormat1.parse("2021-02-28");
+        java.sql.Date date1 = new java.sql.Date(parse2.getTime());
+        System.out.println(date1);
+        System.out.println(date1.getClass());
+    }
+
+    @Test
+    //"三天打鱼两天晒网"   从2005-01-01开始，问在xxxx年xx月xx日时是在打鱼还是晒网
+    //举例： 2021-01-31
+    public void test3() throws ParseException {
+        Date date = new Date();
+
+        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
+        Date parse1 = simpleDateFormat1.parse("2005-01-01");
+        Date parse2 = simpleDateFormat1.parse("2020-01-31");
+        long l = parse2.getTime() - parse1.getTime();
+
+        long l1 = (l / ((1000 * 60 * 60 * 24) + 1) % 5 );
+        if (l1 == 3 || l1 ==2 || l1 ==1){
+            System.out.println("正在打鱼");
+        }else {
+            System.out.println("正在晒网");
+        }
+    }
+````
+#### 9.3.4. Calendar类：日历类(抽象类)
+##### 具体操作
+````
+        //1.实例化
+        //方式一：创建子类(GregorianCalendar)的对象
+        //方式二：调用其静态方法(getInstance())
+        Calendar calendar = Calendar.getInstance();
+
+        //2.常用方法
+        //get()
+        int days = calendar.get(Calendar.DAY_OF_MONTH);
+        System.out.println(days);
+
+        //set()：将日期强制设置
+        calendar.set(Calendar.DAY_OF_MONTH, 4);
+        days = calendar.get(Calendar.DAY_OF_MONTH);
+        System.out.println(days);
+
+        //add()
+        calendar.add(Calendar.DAY_OF_MONTH, 15);
+        days = calendar.get(Calendar.DAY_OF_MONTH);
+        System.out.println(days);
+
+        //getTime()：Calendar ---> Date
+        Date date = calendar.getTime();
+        System.out.println(date);
+
+        //setTime()：Date ---> Calendar
+        Date date1 = new Date();
+        calendar.setTime(date1);
+        days = calendar.get(Calendar.DAY_OF_MONTH);
+        System.out.println(days);
+````
+### 9.4 JDK8中新的日期时间API
+#### 9.4.1 日期时间API的迭代
+第一代：JDK1.0  Date类  
+第二代：JDK1.1  Calendar类   一定程度上替换Date类  
+第三代：JDK1.8  由Joda-Time包提出一套新的API
+
+#### 9.4.2 前两代存在的问题举例
++ 可变性：像日期和时间这样的类应该是不可变的。
++ 偏移性：Date中的年份是从1900开始的，而月份都从0开始。
++ 格式化：格式化只对Date有用，Calendar则不行。
++ 此外，它们也不是线程安全的；不能处理闰秒等。
+
+#### 9.4.3 java8中新的日期时间API涉及到的包
++ java.time – 包含值对象的基础包
++ java.time.chrono – 提供对不同的日历系统的访问
++ java.time.format – 格式化和解析时间和日期
++ java.time.temporal – 包括底层框架和扩展特性
++ java.time.zone – 包含时区支持的类
+
+#### 9.4.4 本地日期、本地时间、本地日期时间的使用：LocalDate/LocalTime/LocalDateTime
+##### 说明：
+LocalDate、LocalTime、LocalDateTime类是其中较重要的几个类，它们的实例是不可变的对象，分别表示使用 ISO-8601日历系统的日期、时间、日期和时间。 它们提供了简单的本地日期或时间，并不包含当前的时间信息，也不包含与时区 相关的信息。  
+##### 常用方法
++ now( ) / * now(ZoneId zone) 静态方法，根据当前时间创建对象/指定时区的对象  
++ of( ) 静态方法，根据指定日期/时间创建对象  
++ getDayOfMonth( )/getDayOfYear( ) 获得月份天数(1-31) /获得年份天数(1-366)  
++ getDayOfWeek( ) 获得星期几(返回一个 DayOfWeek 枚举值)  
++ getMonth( ) 获得月份, 返回一个 Month 枚举值  
++ getMonthValue( ) / getYear( ) 获得月份(1-12) /获得年份  
++ getHour( )/getMinute()/getSecond( ) 获得当前对象对应的小时、分钟、秒  
++ withDayOfMonth( )/withDayOfYear( )/  
++ withMonth( )/withYear( ) 将月份天数、年份天数、月份、年份修改为指定的值并返回新的对象  
++ plusDays( ), plusWeeks( ),  
++ plusMonths( ), plusYears( ),plusHours( ) 向当前对象添加几天、几周、几个月、几年、几小时  
++ minusMonths( ) / minusWeeks()/  
++ minusDays( )/minusYears( )/minusHours( ) 从当前对象减去几月、几周、几天、几年、几小时  
+
+#### 9.4.5 瞬时点
+##### 说明
+1. 时间线上的一个瞬时点。 
+2. 表示自1970年1月1日0时0分0秒（UTC）开始的秒数
+3. 类似于java.util类
+##### 常用方法
++ now( ) 静态方法，返回默认UTC时区的Instant类的对象
++ ofEpochMilli(long epochMilli) 静态方法，返回在1970-01-01 00:00:00基础上加上指定毫秒 数之后的Instant类的对象
++ atOffset(ZoneOffset offset) 结合即时的偏移来创建一个OffsetDateTime
++ toEpochMilli( ) 返回1970-01-01 00:00:00到当前时间的毫秒数，即为时间戳
+  
+*时间戳是指格林威治时间1970年01月01日00时00分00秒(北京时间1970年01月01日08时00分00秒)起至现在的总秒数。*
+
+#### 9.4.6 日期时间格式化类：DateTimeFormatter
+##### 说明
+1. DateTimeFormatter:格式化或解析日期、时间。
+2. 类似于SimpleDateFormat
+##### 常用方法
+实例化方式：  
++ 预定义的标准格式。如： ISO_LOCAL_DATE_TIME;ISO_LOCAL_DATE;ISO_LOCAL_TIME  
++ 本地化相关的格式。如：ofLocalizedDateTime(FormatStyle.LONG)  
++ 自定义的格式。如：ofPattern(“yyyy-MM-dd hh:mm:ss”)  
+
+常用方法：  
++ ofPattern(String pattern) 静态方法，返回一个指定字符串格式的DateTimeFormatter
++ format(TemporalAccessor t) 格式化一个日期、时间，返回字符串 
++ parse(CharSequence text) 将指定格式的字符序列解析为一个日期、时间
+**特别地，自定义的格式。如ofPattern("yyyy-MM-dd hh:mm:ss")**
+````
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日  hh:mm:ss");
+        System.out.println(timeFormatter);
+        //格式化
+        String s = timeFormatter.format(time);
+        System.out.println(s);
+
+        System.out.println("***********************************************");
+
+        //解析
+        TemporalAccessor parse1 = timeFormatter.parse("2021年02月08日  03:35:26");
+        System.out.println(parse1);
+````
+#### 9.4.7 其他API的使用
+##### 带时区日期时间：ZoneDateTime/ZoneId
+举例：  
++ ZoneId：该类中包含了所有的时区信息，一个时区的ID，如 Europe/Paris
++ ZonedDateTime：一个在ISO-8601日历系统时区的日期时间，如 2007-12-03T10:15:30+01:00 Europe/Paris。
+    + 其中每个时区都对应着ID，地区ID都为“{区域}/{城市}”的格式，例如： Asia/Shanghai等
++ Clock：使用时区提供对当前即时、日期和时间的访问的时钟。
++ 持续时间：Duration，用于计算两个“时间”间隔
++ 日期间隔：Period，用于计算两个“日期”间隔
++ TemporalAdjuster: 时间校正器。有时我们可能需要获取例如：将日期调整到“下一个工作日”等操作。
++ TemporalAdjusters: 该类通过静态方法(firstDayOfXxx()/lastDayOfXxx()/nextXxx())提供了大量的常用TemporalAdjuster 的实现。
+````
+//ZoneId:类中包含了所有的时区信息
+    // ZoneId的getAvailableZoneIds():获取所有的ZoneId
+    Set<String> zoneIds = ZoneId.getAvailableZoneIds();
+    for (String s : zoneIds) {
+        System.out.println(s);
+    }
+    // ZoneId的of():获取指定时区的时间
+    LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Tokyo"));
+    System.out.println(localDateTime);
+    
+    //ZonedDateTime:带时区的日期时间
+    // ZonedDateTime的now():获取本时区的ZonedDateTime对象
+    ZonedDateTime zonedDateTime = ZonedDateTime.now();
+    System.out.println(zonedDateTime);
+    // ZonedDateTime的now(ZoneId id):获取指定时区的ZonedDateTime对象
+    ZonedDateTime zonedDateTime1 = ZonedDateTime.now(ZoneId.of("Asia/Tokyo"));
+    System.out.println(zonedDateTime1);
+    
+    //Duration:用于计算两个“时间”间隔，以秒和纳秒为基准
+    LocalTime localTime = LocalTime.now();
+    LocalTime localTime1 = LocalTime.of(15, 23, 32);
+    //between():静态方法，返回Duration对象，表示两个时间的间隔
+    Duration duration = Duration.between(localTime1, localTime);
+    System.out.println(duration);
+    
+    System.out.println(duration.getSeconds());
+    System.out.println(duration.getNano());
+    
+    LocalDateTime localDateTime = LocalDateTime.of(2016, 6, 12, 15, 23, 32);
+    LocalDateTime localDateTime1 = LocalDateTime.of(2017, 6, 12, 15, 23, 32);
+    
+    Duration duration1 = Duration.between(localDateTime1, localDateTime);
+    System.out.println(duration1.toDays());
+    
+    //Period:用于计算两个“日期”间隔，以年、月、日衡量
+    LocalDate localDate = LocalDate.now();
+    LocalDate localDate1 = LocalDate.of(2028, 3, 18);
+    Period period = Period.between(localDate, localDate1);
+    System.out.println(period);
+    System.out.println(period.getYears());
+    System.out.println(period.getMonths());
+    System.out.println(period.getDays());
+    Period period1 = period.withYears(2);
+    System.out.println(period1);
+    
+    // TemporalAdjuster:时间校正器
+    // 获取当前日期的下一个周日是哪天？
+    TemporalAdjuster temporalAdjuster = TemporalAdjusters.next(DayOfWeek.SUNDAY);
+    LocalDateTime localDateTime = LocalDateTime.now().with(temporalAdjuster);
+    System.out.println(localDateTime);
+    // 获取下一个工作日是哪天？
+    LocalDate localDate = LocalDate.now().with(new TemporalAdjuster() {
+        @Override
+        public Temporal adjustInto(Temporal temporal) {
+            LocalDate date = (LocalDate) temporal;
+            if (date.getDayOfWeek().equals(DayOfWeek.FRIDAY)) {
+                return date.plusDays(3);
+            } else if (date.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
+                return date.plusDays(2);
+            } else {
+                return date.plusDays(1);
+            }   
+        }
+    });
+    System.out.println("下一个工作日是：" + localDate);
+````
+
+##### 与传统日期处理的转换
+|类|To遗留类|From遗留类|
+|:---:|:---:|:---:|
+|java.time.Instant与java.util.Date|Date.from(instant)|date.toInstant()|
+|java.time.Instant与java.sql.Timestamp|Timestamp.from(instant)|timestamp.toInstant()|
+|java.time.ZonedDateTime与java.util.GregorianCalendar|GregorianCalendar.from(zonedDateTime)|cal.toZonedDateTime()|
+java.time.LocalDate与java.sql.Time|e Date.valueOf(localDate)|date.toLocalDate()|
+|java.time.LocalTime与java.sql.Time|Date.valueOf(localDate)|date.toLocalTime()|
+|java.time.LocalDateTime与java.sql.Timestamp|Timestamp.valueOf(localDateTime)|timestamp.toLocalDateTime()|
+|java.time.ZoneId与java.util.TimeZone|Timezone.getTimeZone(id)|timeZone.toZoneId()|
+|java.time.format.DateTimeFormatter与java.text.DateFormat|formatter.toFormat()|无|
+
+### 9.5 Java比较器
+#### 9.5.1 使用背景
+说明：Java中的对象，正常情况下只能比较：== 或 !=  不能使用 > 或 < 。但是在开发场景中，我们需要对多个对象进行排序，言外之意，需要比较对象的大小。如何实现？使用两个接口中的任意一个：Compare或Comparator。  
+#### 9.5.2 自然排序：使用Comparable接口
+##### 说明
+1. 像String、包装类等实现了Comparable接口，重写了compareTo(obj)方法，给出了比较两个对象大小的方式  
+2. 像String、包装类重写ComparableTo()方法之后，进行了小到大的排列  
+3. 重写CompareTo(obj)的规则:  
++ 如果当前对象this大于形参对象obj，则返回正整数，  
++ 如果当前对象this小于形参对象obj，则返回负整数，  
++ 如果i当前对象this等于形参对象obj，则返回零。  
+4. 对于自定义类来说，如果需要排序，我们可以让自定义类实现Comparable接口，重写compareTo()方法在compareTo(obj)方法中指明排序方式  
+##### 自定义代码举例
+````
+ @Override
+    public String toString() {
+        return "Goods{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                '}';
+    }
+
+    //指明商品比较大小的方式:价格从高到低排序，如果两个价格相同，则按名声顺序排列
+    @Override
+    public int compareTo (Object o) {
+        if (o instanceof Goods) {
+            Goods goods = (Goods) o;
+            if (this.price > goods.price) {
+                return 1;
+            } else if (this.price < goods.price) {
+                return -1;
+            }else {
+//                return 0;
+                return this.name.compareTo(goods.name);
+            }
+        }
+        throw new RuntimeException("传入数据类型不一致" );
+    }
+````
+#### 9.5.3 定制排序
+##### 说明
+1. 背景：当元素的类型没有实现java.lang.Comparable接口而又不方便修改代码，或者实现了java.lang.Comparable接口的排序规则不适合当前的操作，那么可以考虑使用 Comparator 的对象来排序，  
+2. 重写compare(Object o1,Object o2)方法，比较o1和o2的大小：如果方法返回正整数，则表示o1大于o2；如果返回0，表示相等；返回负整数，表示o1小于o2。  
+#### 代码举例
+````
+        Comparator comparator = new Comparator() {
+            //指明产品比较大小的方式：按照产品名称从低到高排序，再按照价格从高到低排序
+            @Override
+            public int compare(Object o1, Object o2) {
+                if (o1 instanceof Goods && o2 instanceof Goods) {
+                    Goods g1 = (Goods) o1;
+                    Goods g2 = (Goods) o2;
+                    if (g1.getName().equals(g2.getName())) {
+                                return Double.compare(g1.getPrice(), g2.getPrice());
+                    } else {
+                        return g1.getName().compareTo(g2.getName());
+                    }
+                }
+                throw new RuntimeException("传入数据类型不一致" );
+            }
+        }
+````
+
+#### 9.5.4 两种方式的对比
+* Comparable接口的方式一旦确定，保证Comparable接口实现类的对象在任何位置都可以比较大小
+* Comparator接口属于临时性的比较
+
+### 9.6 其他类
+#### 9.6.1 System类
++ System类代表系统，系统级的很多属性和控制方法都放置在该类的内部。该类位于java.lang包。  
++ 由于该类的构造器是private的，所以无法创建该类的对象，也就是无法实例化该类。其内部的成员变量和成员方法都是static的，所以也可以很方便的进行调用。  
++ 方法
+    +  native long currentTimeMillis()：
+    + void exit(int status)：
+    + void gc()：
+    + String getProperty(String key)：
+    
+````
+    String javaVersion = System.getProperty("java.version");
+    System.out.println("java的version:" + javaVersion);
+    
+    String javaHome = System.getProperty("java.home");
+    System.out.println("java的home:" + javaHome);
+    
+    String osName = System.getProperty("os.name");
+    System.out.println("os的name:" + osName);
+    
+    String osVersion = System.getProperty("os.version");
+    System.out.println("os的version:" + osVersion);
+    
+    String userName = System.getProperty("user.name");
+    System.out.println("user的name:" + userName);
+    
+    String userHome = System.getProperty("user.home");
+    System.out.println("user的home:" + userHome);
+    
+    String userDir = System.getProperty("user.dir");
+    System.out.println("user的dir:" + userDir);
+````
+#### 9.6.5 Math类
+java.lang.Math提供了一系列静态方法用于科学计算。其方法的参数和返回值类型一般为double型。
+
+#### 6.6.6 BigInteger、BigDecimal
+##### 说明
++ java.math包的BigInteger可以表示不可变的任意精度的整数。
++ 在商业计算中，要求数字精度比较高，故用到java.math.BigDecimal类。
+
+##### 代码举例
+````
+public void testBigInteger() {
+    BigInteger bi = new BigInteger("12433241123");
+    BigDecimal bd = new BigDecimal("12435.351");
+    BigDecimal bd2 = new BigDecimal("11");
+    System.out.println(bi);
+    // System.out.println(bd.divide(bd2));
+    System.out.println(bd.divide(bd2, BigDecimal.ROUND_HALF_UP));
+    System.out.println(bd.divide(bd2, 15, BigDecimal.ROUND_HALF_UP));
+}
+````
 
 
 
