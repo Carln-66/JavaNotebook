@@ -11,7 +11,6 @@ import org.junit.Test;
  */
 public class getMaxSubString {
 
-    //未完成
     public String test(String str1, String str2){
         if (str1 != null &&  str2 != null){
             String minStr = (str1.length() < str2.length()) ? str1 : str2;
