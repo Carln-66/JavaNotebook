@@ -2661,6 +2661,248 @@ public void testBigInteger() {
 }
 ````
 
+## 10. 枚举类和注解
+### 10.1.1 枚举类的使用
+#### n枚举类说明
+1. 枚举类的理解：类的对象只有有限个，确定个，我们称此类为枚举类  
+2. 当需要定义一组常量时，强烈建议使用枚举类  
+3. 如果枚举类中只有一个对象，则可以作为单例模式的实现方式  
+#### 10.1.2 如何自定义枚举类？步骤
+````
+class Season{
+
+    //1.声明Season对象的属性: private final修饰
+    private final String seasonName;
+    private final String seasonDesc;
+
+    //2. 私有化类的构造器
+    private Season(String seasonName, String seasonDesc){
+        this.seasonName = seasonName;
+        this.seasonDesc = seasonDesc;
+    }
+
+    //3. 提供当前枚举类的多个对象
+    public static final Season SPRING = new Season("春天", "温暖");
+    public static final Season SUMMER = new Season("夏天", "炎热");
+    public static final Season AUTUMN = new Season("秋天", "凉爽");
+    public static final Season WINTER = new Season("冬天", "寒冷");
+
+    //其他诉求1：获取枚举类对象的属性
+    public String getSeasonName(){
+        return seasonName;
+    }
+
+    public String getSeasonDesc(){
+        return seasonDesc;
+    }
+
+    //其他诉求2：提供toString()
+    @Override
+    public String toString() {
+        return "Season{" +
+                "seasonName='" + seasonName + '\'' +
+                ", seasonDesc='" + seasonDesc + '\'' +
+                '}';
+    }
+}
+````
+#### 10.1.3 JDK5.0新增使用enum定义枚举类。步骤：
+````
+public class EnumTest1 {
+    public static void main(String[] args) {
+        Season1 summer = Season1.SUMMER;
+        System.out.println(Season1.class.getSuperclass());
+        System.out.println("----------------------------------");
+        Season1[] values = Season1.values();
+        for (int i = 0; i < values.length; i++) {
+            System.out.println(values[i]);
+        }
+        System.out.println("----------------------------------");
+        Thread.State[] values1 = Thread.State.values();
+        for (int i = 0; i < values1.length; i++) {
+            System.out.println(values1[i]);
+        }
+        System.out.println("----------------------------------");
+        //valueOf(String objName): 根据提供的objName，返回与objName同名的枚举类对象
+        //如果未找到名为objName的对象，则抛异常：IllegalArgumentException
+        Season1 winter = Season1.valueOf("WINTER");
+        System.out.println(winter);
+        System.out.println("----------------------------------");
+        //调用接口
+        winter.test();
+    }
+}
+
+enum Season1{
+
+    //1. 提供当前枚举类的多个对象，多个对象之间用","隔开，末尾对象用";"结束
+    SPRING("春天", "温暖"),
+    SUMMER("夏天", "炎热"),
+    AUTUMN("秋天", "凉爽"),
+    WINTER("冬天", "寒冷");
+
+    //2.声明Season对象的属性: private final修饰
+    private final String seasonName;
+    private final String seasonDesc;
+
+    //3. 私有化类的构造器
+    private Season1(String seasonName, String seasonDesc) {
+        this.seasonName = seasonName;
+        this.seasonDesc = seasonDesc;
+    }
+
+    //其他诉求1：获取枚举类对象的属性
+    public String getSeasonName() {
+        return seasonName;
+    }
+
+    public String getSeasonDesc() {
+        return seasonDesc;
+    }
+}
+
+````
+#### 10.1.4 使用enum定义枚举类之后，枚举类常用方法：(继承于java.lang.Enum类)
+````
+        Season1 summer = Season1.SUMMER;
+        System.out.println(Season1.class.getSuperclass());
+        //toString(): 返回枚举类对象的名称
+        System.out.println(summer.toString());
+        System.out.println("----------------------------------");
+        //values(): 返回所有枚举类对象构成的数组
+        Season1[] values = Season1.values();
+        for (int i = 0; i < values.length; i++) {
+            System.out.println(values[i]);
+        }
+        System.out.println("----------------------------------");
+        Thread.State[] values1 = Thread.State.values();
+        for (int i = 0; i < values1.length; i++) {
+            System.out.println(values1[i]);
+        }
+        System.out.println("----------------------------------");
+        //valueOf(String objName): 根据提供的objName，返回与objName同名的枚举类对象
+        //如果未找到名为objName的对象，则抛异常：IllegalArgumentException
+        Season1 winter = Season1.valueOf("WINTER");
+        System.out.println(winter);
+        System.out.println("----------------------------------");
+        //调用接口
+````
+#### 10.1.5 使用enum定义枚举类之后，如何让枚举类对象分别实现接口
+````
+interface Test{
+    void test();
+}
+
+enum Season1 implements Test{
+
+    SPRING("春天", "温暖"){
+        @Override
+        public void test() {
+            System.out.println("这是一个测试，春天");
+        }
+    },
+    SUMMER("夏天", "炎热"){
+        @Override
+        public void test() {
+            System.out.println("这是一个测试，夏天");
+        }
+    },
+    AUTUMN("秋天", "凉爽"){
+        @Override
+        public void test() {
+            System.out.println("这是一个测试，秋天");
+        }
+    },
+    WINTER("冬天", "寒冷"){
+        @Override
+        public void test() {
+            System.out.println("这是一个测试，冬天");
+        }
+    };
+````
+
+### 10.2 注解的使用
+#### 10.2.1 注解的理解
+1. 理解注解：  
+1.1 jdk5.0新增功能  
+1.2 Annotation 其实就是代码里的特殊标记, 这些标记可以在编译, 类加载, 运行时被读取, 并执行相应的处理。通过使用 Annotation, 程序员可以在不改变原有逻辑的情况下, 在源文件中嵌入一些补充信息。代码分析工具、开发工具和部署工具可以通过这些补充信息进行验证或者进行部署。  
+1.3 在JavaSE中，注解的使用目的比较简单，例如标记过时的功能，忽略警告等。在JavaEE/Android中注解占据了更重要的角色，例如用来配置应用程序的任何切面，代替JavaEE旧版中所遗留的繁冗代码和XML配置等。   
+
+**框架 = 注解 + 反射机制 + 设计模式**
+
+#### 10.2.2 注解的使用示例
++ 示例一：生成文档的相关注解
++ 示例二：在编译时进行格式检查(JDK内置的三个基本注解)
+    + @Override: 限定重写父类方法，该注解只能用于方法
+    + @Deprecated: 用于表示所修饰的元素(类，方法等)已过时。通常是因为所修饰的结构危险或存在更好的选择
+    + @SuppressWarnings: 抑制编译器警告
++ 示例三：跟踪代码依赖性，实现配置文件功能
+#### 10.2.3 如何自定义注解：参照@SuppressWarnings定义
+##### 说明
+*  如果注解有成员，在使用注解时，需要指明成员的值(参照MyAnnotation构造)  
+*  自定义注解必须配上注解的信息处理流程(使用反射)才有意义  
+*  自定义注解通常都会指明两个元注解：Retention、Target  
+##### 代码举例
+````
+@Inherited
+@Repeatable(MyAnnotations.class)
+@Retention(RetentionPolicy.RUNTIME)
+Target({TYPE, FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE, TYPE_PARAMETER, TYPE_USE})
+public @interface MyAnnotation {
+    String value() default "hello";
+}
+//注解声明为@interface，此interface和接口没有关系。
+//内部定义成员，通常使用从value表示
+//可以指定成员的默认值，使用default定义
+//如果自定义注解没有成员，表明是一个标识作用
+````
+#### 10.2.4 元注解：对现有的注解进行解释说明的注解
+JDK提供的四种元注解：对现有的注解进行解释说明的注解  
+* Retention: 指定的所修饰的Annotation的生命周期：SOURCE、CLASS(默认行为)、RUNTIME(只有声明为RUNTIME生命周期的注解才能通过反射获取)  
+* Target: 用于指定被修饰的Annotation能用于修饰哪些程序元素  
+//以下两种元注解出现频率较低  
+* Documented: 表示所修饰的注解被javadoc解析时，保留下来
+* Inherited: 被它修饰的Annotation将具有继承性
+
+#### 10.2.5 如何获取注解信息：通过反射来进行获取、调用
+前提：要求此元注解的Retention中声明的生命周期状态为RUNTIME  
+
+#### 10.2.6 JDK8中注解的新特性
+* 可重复注解：在MyAnnotation声明@Repetable，成员值为MyAnnotations.class
+    * MyAnnotation的Target和Retention等元注解和MyAnnotations相同
+* 类型注解：ElementType.TYPE_PARAMETER表示该注解能写在类型变量的声明语句中(如泛型声明)
+    * ElementType.TYPE_USE表示该注解能写在适用类型的任何语句中。
+
+## 11. Java集合
+### 11.1 数组与集合
+#### 11.1.1 集合与数组储存数据概述
+集合、数组都是对多个数据进行存储操作的结构，简称Java容器。  
+说明：此时的存储，主要指内存层面的存储，不涉及持久化的存储(.txt, .jpg, .avi, 数据库中)  
+#### 11.1.2 数组储存的特点
+* 一旦初始化以后，长度确定了  
+* 数组一旦定义好，其元素的类型就确定了。我们也就只能操作指定类型的数据了。  
+#### 11.1.3 数组储存的弊端
+* 一旦初始化以后，其长度不可修改。
+* 数组中提供的方法非常有限，对于添加、删除、插入数据等操作非常不方便。同时效率不高
+* 获取数组中实际元素的个数的需求，数组没有现成的属性或方法可用
+* 数组存储数据的特点：有序、可重复。对于无序、不可重复的需求不能够满足。
+#### 11.1.4 集合储存的优点
+解决数组存储数据方面的弊端。
+### 11.2 Collection接口
+#### 11.2.1 单列集合框架结构
+      |----Collection接口：单列集合，用来储存一个一个的对象  
+          |----List接口：有序的、可重复的数据  ---- "动态数组"  
+              |----ArrayList、LinkedList、Vector  
+
+          |----Set接口：无序的、不可重复的数据  ---- 类似于数学意义的"集合"  
+              |----HashSet、LinedHashSet、TreeSet  
+#### 11.2.2 图示
+![Collection接口继承树](https://raw.githubusercontent.com/Carln-66/img/main/1612888096(1).png) 
+
+
+
+
+
 
 
 
