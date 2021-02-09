@@ -12,7 +12,10 @@ public class EnumTest1 {
     public static void main(String[] args) {
         Season1 summer = Season1.SUMMER;
         System.out.println(Season1.class.getSuperclass());
+        //toString(): 返回枚举类对象的名称
+        System.out.println(summer.toString());
         System.out.println("----------------------------------");
+        //values(): 返回所有枚举类对象构成的数组
         Season1[] values = Season1.values();
         for (int i = 0; i < values.length; i++) {
             System.out.println(values[i]);
