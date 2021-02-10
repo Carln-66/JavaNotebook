@@ -12,8 +12,9 @@ import java.util.Iterator;
  * @Description:
  *
  * 集合元素的遍历操作，使用迭代器Iterator接口
- * 内部的方法hasNext()和next()
- *
+ * 1. 内部的方法hasNext()和next()
+ * 2. 集合对象每次调用iterator()方法都得到一个全新的迭代器对象，默认游标都在集合的第一个元素之前
+ * 3. 内部定义了remove()，可以在遍历的时候，删除集合中的元素。此方法不同于集合直接调用remove()
  */
 public class IteratorTest {
 
@@ -44,7 +45,28 @@ public class IteratorTest {
         while (iterator.hasNext()) {
             System.out.println(iterator.next());
         }
-        
+    }
 
+    //测试Iterator中的remove()
+    @Test
+    public void test2(){
+        Collection collection = new ArrayList();
+        collection.add("lmx");
+        collection.add(689);
+        collection.add(new String("aaa"));
+
+        //删除集合中"aaa"
+        Iterator iterator = collection.iterator();
+        while (iterator.hasNext()){
+            Object next = iterator.next();
+            if ("aaa".equals(next)){
+                iterator.remove();
+            }
+        }
+        //重新遍历集合
+        iterator = collection.iterator();
+        while(iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
     }
 }
