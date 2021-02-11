@@ -1,5 +1,9 @@
 package CollectionTest;
 
+import org.junit.Test;
+
+import java.util.*;
+
 /**
  * @Auther: Carl
  * @Date: 2021/02/10/19:50
@@ -50,7 +54,162 @@ package CollectionTest;
  *
  *  四、Vector源码分析：JDK7和JDK8中通过Vector()构造器构建对象时，底层创建了长度为10的数组。在扩容方面，默认扩容大小为原来数组长度的2倍。
  *
+ *  五、List接口中的常用方法
+ *
+ *
  *
  */
 public class ListTest {
+
+    /*
+    void add(int index, Object ele):在index位置插入ele元素
+    boolean addAll(int index, Collection elements):从index位置开始将elements中的所有元素添加进来
+    Object get(int index):获取指定index位置的元素
+    int indexOf(Object obj):返回obj在集合中首次出现的位置
+    int lastIndexOf(Object obj):返回obj在当前集合中末次出现的位置
+    Object remove(int index):移除指定index位置的元素，并返回此元素
+    Object set(int index, Object element):设置指定index位置的元素为element
+    List subList(int fromIndex, int toIndex):返回从fromIndex到toIndex位置的子集合
+
+    常用方法
+    增：add(Object obj)
+    删：remove(int index)/(Object obj)
+    改：set(int index, Object element)
+    查：get(int index)
+    插：add(int index, Object element)
+    遍历：1. Iterator迭代器方式
+         2. 增强for循环
+         3. 普通for循环
+     */
+
+    @Test
+    public void test2(){
+        ArrayList arrayList = new ArrayList();
+        arrayList.add(123);
+        arrayList.add("abc");
+        arrayList.add(new String("uio"));
+        arrayList.add(new Person("Carl", 18));
+        arrayList.add("abc");
+
+        //方式一：迭代器方式
+        Iterator iterator = arrayList.iterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
+        }
+
+        System.out.println("**********************************");
+
+        //方式二：增强for循环
+        for(Object obj : arrayList){
+            System.out.println(obj);
+        }
+
+
+        System.out.println("**********************************");
+        //方式三：普通for循环
+        for (int i = 0; i < arrayList.size(); i++) {
+            System.out.println(arrayList.get(i));
+        }
+    }
+
+    @Test
+    public void test1(){
+        ArrayList arrayList = new ArrayList();
+        arrayList.add(123);
+        arrayList.add("abc");
+        arrayList.add(new String("uio"));
+        arrayList.add(new Person("Carl", 18));
+        arrayList.add("abc");
+
+        System.out.println(arrayList);
+        System.out.println();
+
+        //void add(int index, Object element):在index位置插入element元素
+        System.out.println("---------------------void add(int index, Object element)--------------------------");
+        arrayList.add(1, "SS");
+        System.out.println(arrayList);
+
+        System.out.println();
+
+        //boolean addAll(int index, Collection elements):从index位置开始将elements中的所有元素添加进来
+        System.out.println("---------------------boolean addAll(int index, Collection elements)--------------------------");
+        List<Integer> asList = Arrays.asList(1, 2, 3);
+        arrayList.addAll(asList);
+//        arrayList.add(asList);    //此操作会将asList中的所有元素视为一个元素添加进集合arrayList中
+        System.out.println(arrayList.size());
+
+        System.out.println();
+
+        //Object get(int index):获取指定index位置的元素
+        System.out.println("---------------------Object get(int index)--------------------------");
+        System.out.println(arrayList.get(3));
+
+        System.out.println();
+
+        //int indexOf(Object obj):返回obj在集合中首次出现的位置，如果不存在则返回-1
+        System.out.println("---------------------int indexOf(Object obj)--------------------------");
+        int indexOf = arrayList.indexOf("abc");
+        System.out.println(indexOf);
+
+        System.out.println();
+
+        //int lastIndexOf(Object obj):返回obj在当前集合中末次出现的位置
+        System.out.println("---------------------int lastIndexOf(Object obj)----------------------------");
+        int lastIndexOf = arrayList.lastIndexOf("456");
+        System.out.println(lastIndexOf);
+
+        System.out.println();
+
+        //Object remove(int index):移除指定index位置的元素，并返回此元素
+        System.out.println("---------------------Object remove(int index)----------------------------");
+        Object remove = arrayList.remove(1);
+        System.out.println(remove);
+
+        System.out.println();
+
+        //Object set(int index, Object element):设置指定index位置的元素为element
+        System.out.println("---------------------Object remove(int index)----------------------------");
+        Object set = arrayList.set(7, new Date());
+        System.out.println(set);
+        System.out.println(arrayList);
+
+        System.out.println();
+
+        //List subList(int fromIndex, int toIndex):返回从fromIndex到toIndex位置的左闭右开区间子集合
+        System.out.println("---------------------List subList(int fromIndex, int toIndex)----------------------------");
+        List subList = arrayList.subList(2, 5);
+        System.out.println(subList);
+
+        System.out.println();
+    }
+
+}
+
+class Person{
+    private String name;
+    private int age;
+
+    public Person() {
+    }
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
 }
