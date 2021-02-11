@@ -27,10 +27,8 @@ import java.util.Date;
  *      |----Collection接口：单列集合，用来储存一个一个的对象
  *          |----List接口：有序的、可重复的数据  ---- "动态数组"
  *              |----ArrayList、LinkedList、Vector
- *
  *          |----Set接口：无序的、不可重复的数据  ---- 类似于数学意义的"集合"
  *              |----HashSet、LinedHashSet、TreeSet
- *
  *      |----Map接口：双列集合，用来存储一对(key - value)一对的数据    ---- 类比于函数 y=f(x)  (key->x, value->value)
  *          |----HashMap、LinkedHashMap、TreeMap、Hashtable、Properties
  *
