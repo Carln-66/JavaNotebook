@@ -2892,17 +2892,296 @@ JDK提供的四种元注解：对现有的注解进行解释说明的注解
 #### 11.2.1 单列集合框架结构
       |----Collection接口：单列集合，用来储存一个一个的对象  
           |----List接口：有序的、可重复的数据  ---- "动态数组"  
-              |----ArrayList、LinkedList、Vector  
-
+              |----ArrayList、LinkedList、Vector
           |----Set接口：无序的、不可重复的数据  ---- 类似于数学意义的"集合"  
               |----HashSet、LinedHashSet、TreeSet  
 #### 11.2.2 图示
 ![Collection接口继承树](https://raw.githubusercontent.com/Carln-66/img/main/1612888096(1).png) 
 #### 11.2.3 Collection接口常用方法
+add(Object obj), addAll(Collection coll), size(), isEmpty(), clear();  
+
+//以下方法都需要所在类重写equals()  
+contains(Object obj), containsAll(Collection coll), remove(Object obj), removeAll(Collection coll), retainsAll(Collection coll), equals(Object obj);  
+
+hashCode(), toArray(), iterator();  
+
 
 #### 11.2.4 Collection集合与数组间的转换
+````
+        Collection collection = new ArrayList();
+        collection.add(new Person("hzy", 23));
+        collection.add("lmx");
+        collection.add(689);
+        collection.add(new String("aaa"));
 
+        //toArray(): 集合--->数组
+        System.out.println("*****************toArray()********************");
+        Object[] array = collection.toArray();
+        for (int i = 0; i < array.length; i++) {
+            System.out.println(array[i]);
+        }
 
+        System.out.println();
+
+        //asList(): 调用Arrays类的静态方法将 数组--->集合
+        System.out.println("*****************asList()********************");
+        List<Object> asList = Arrays.asList(array);
+        System.out.println(asList);
+
+        List list = Arrays.asList(new int[]{123, 456});  //[[I@621be5d1], 输出地址值，认为存储了一个元素。解决方法：new Integer[]{};
+        System.out.println(list);
+
+        System.out.println();
+````
+#### 11.2.5 使用Collection集合储存对象，要求对象所属的类满足：
+向Collection接口的实现类的对象中添加数据obj时，要求所在类要重写equals()。
+
+#### 11.2.6 本章要求
+层次一：选择合适的集合类去实现数据的保存，调用其内部的相关方法。  
+层次二：不同的集合类底层的数据结构为何？如何实现数据的操作：增删改查等。  
+
+### 11.3 Iterator接口与foreach循环
+#### 11.3.1 遍历Collection的两种方式
+1. 使用迭代器Iterator  
+2.使用for-each(增强for循环)  
+#### 11.3.2 java.utils包下定义的迭代器接口：Iterator
+##### 说明
++ 说明Iterator都西昂称为迭代器(设计模式的一种)，主要用于遍历Collection集合中的元素。  
++ GOF给迭代器模式的定义为：提供一种方法访问一个容器(container)对象中的各个元素，而又不暴露该对象的内部细节。迭代器模式就是为容器而生。  
+##### 作用：遍历Collection集合元素
+##### 如何获取实例：collection.iterator()返回一个迭代器实例
+##### 如何操作
+````
+        Iterator iterator = collection.iterator();
+        //hasNext(): 判断是否还有下一个元素
+        while (iterator.hasNext()) {
+        //next(): 1. 指针下移  2. 将下一以后集合位置上的元素返回
+            System.out.println(iterator.next());
+        }
+    }
+````
+##### 图示说明
+![迭代器的执行原理](https://raw.githubusercontent.com/Carln-66/img/main/%E8%BF%AD%E4%BB%A3%E5%99%A8%E7%9A%84%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86.png)  
+##### remove()的使用
+````
+    //测试Iterator中的remove()
+    //如果还未调用next()或在上一次调用next方法以后已经调用了remove方法，再调用remove都会报IllegalStateException
+    //内部定义了remove()，可以在遍历的时候，删除集合中的元素。此方法不同于集合直接调用remove()
+    @Test
+    public void test2(){
+        Collection collection = new ArrayList();
+        collection.add("lmx");
+        collection.add(689);
+        collection.add(new String("aaa"));
+
+        //删除集合中"aaa"
+        Iterator iterator = collection.iterator();
+        while (iterator.hasNext()){
+            Object next = iterator.next();
+            if ("aaa".equals(next)){
+                iterator.remove();
+            }
+        }
+        //重新遍历集合
+        iterator = collection.iterator();
+        while(iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
+    }
+````
+#### 11.3.3 JDK5.0新特性--增强for循环(for-each循环)
+##### 遍历集合举例
+````
+    @Test
+    public void test1(){
+        Collection collection = new ArrayList();
+        collection.add("lmx");
+        collection.add(689);
+        collection.add(new String("aaa"));
+
+        //for(集合元素的类型 局部变量 : 集合/数组对象)
+        //内部仍然调用迭代器
+        for (Object obj : collection){
+            System.out.println(obj);
+        }
+    }
+````
+说明：   
+内部仍然调用了迭代器。  
+##### 遍历数组举例
+````
+@Test
+    public void test2(){
+        int[] array = new int[]{1, 2, 3, 4, 5, 6};
+        for(int i : array){
+            System.out.println(i);
+        }
+    }
+````
+
+### 11.4 Collection子接口：List接口
+#### 11.4.1 存储的数据特点 
+存储有序的、可重复的数据   
+#### 11.4.2 常用方法
+增：add(Object obj)  
+删：remove(int index)/(Object obj)  
+改：set(int index, Object element)  
+查：get(int index)  
+插：add(int index, Object element)  
+遍历：   
+     1. Iterator迭代器方式  
+     2. 增强for循环  
+     3. 普通for循环  
+#### 11.4.3 常用实现类
+    |----Collection接口：单列集合，用来储存一个一个的对象  
+        |----List接口：有序的、可重复的数据  ---- "动态数组" ---> 替换原有的数组  
+            |----ArrayList: JDK1.2出现，作为List接口的主要实现类；效率不安全，效率高；底层使用Object[] elementData储存  
+            |----LinkedList: JDK1.2出现；对于频繁的插入、删除操作，使用此类效率比ArrayList高；底层使用双向链表存储  
+            |----Vector: JDK1.0出现，作为List接口的古老实现类；线程安全，效率低；底层使用Object[] elementData储存 
+#### 11.4.4 源码分析(重点)
+##### ArrayList源码分析  
+##### JDK7：  
+> ArrayList list = new ArrayList();   //底层创建了一个长度为10的Object类型数组elementData  
+> list.add(123);  //elementData[0] = new Integer(123);  
+> . . .  
+> list.add(11);   //如果此次的添加导致底层elementData数组容量不够，则进行扩容。默认情况下，扩容大小为原来容量的1.5倍，同时将原有数组中的元素拷贝到新的数组中  
+
+**结论：建议开发中使用带参构造器：ArrayList list = new ArrayList(int capacity)**
+##### JDK8:  
+> ArrayList list = new ArrayList();   //底层Object[] elementData初始化为{}，并没有创建长度为10的数组  
+> list.add(123);  //第一次调用add()时，底层才创建了长度为10的数组，并将数据"123"添加到element[0]中  
+> . . .  
+> 后续的添加和扩容与JDK7相同  
+
+**小结：JDK7中的ArrayList的创建类似于单例模式的饿汉式而JDK8中的ArrayList的对象的创建类似于单例的懒汉模式，延迟了数组的创建，节省内存。**
+
+##### LinkedList源码分析
+
+>       LinkedList list = new LinkedList(); //内部声明了Node类型的first和last属性，默认值为null  
+>       list.add(123);  //将123封装到Node中，创建了Node对象，其中Node定义为：体现了LinkedList的双向链表的说法  
+> 
+>       private static class Node<E> {  
+>           E item;  
+>           Node<E> next;  
+>           Node<E> prev;  
+> 
+>           Node(Node<E> prev, E element, Node<E> next) {  
+>               this.item = element;  
+>               this.next = next;  
+>               this.prev = prev;  
+>           }  
+>       }  
+
+##### Vector的源码分析
+> JDK7和JDK8中通过Vector()构造器构建对象时，底层创建了长度为10的数组。  
+> 在扩容方面，默认扩容大小为原来数组长度的2倍。  
+
+#### 11.4.5 储存元素的要求
+添加的对象所在的类要重写equals()方法
+
+---
+**问题：比较ArrayList、LinkedList、Vector三者的异同**  
+相同点：三个类都实现了List接口，存储数据的特点相同，存储有序的、可重复的数据  
+不同点：  
+    ArrayList: JDK1.2出现，作为List接口的主要实现类；效率不安全，效率高；底层使用Object[] elementData储存  
+    LinkedList: JDK1.2出现；对于频繁的插入、删除操作，使用此类效率比ArrayList高；底层使用双向链表存储  
+    Vector: JDK1.0出现，作为List接口的古老实现类；线程安全，效率低；底层使用Object[] elementData储存  
+JDK7和JDK8中通过Vector()构造器构建对象时，底层创建了长度为10的数组。在扩容方面，默认扩容大小为原来数组长度的2倍。
+
+### 11.5 Collection子接口：Set接口
+#### 11.5.1 储存的数据特点：无序的，不可重复的元素
+以HashSet为例：
++ 无序性：不等于随机性。存储的数据在底层数组中并非按照数组索引的顺序添加，而是根据数据的Hash值决定的。
++ 不可重复性：保证添加的元素按照equals()判断时，不能返回ture，即相同的元素只能添加一个。
+#### 11.5.2 元素的添加过程(以HashSet为例)
+我们向HashSet中添加元素a，首先调用a所在类的HashCode()方法，计算元素a的哈希值，此哈希值接着通过某种算法，计算出HashSet底层数组中的存放位置(即为：索引位置)，判断数组此位置上是否已经有元素：
+
+        --如果此位置上没有其他元素，则元素a添加成功 ---> 情况一
+        --如果此位置上有其他元素b(或以链表形式存在的多个元素)，则比较元素a与元素b的hash值：
+            --如果hash值不相同，则元素a添加成功 ---> 情况二
+            --如果hash值相同，进而需要调用元素a所在类的equals()方法：
+                --equals()返回true，元素a添加失败
+                --equals()返回false，则元素a添加成功 ---> 情况三
+
+对于添加成功的情况二和情况三而言：元素a与已经存在指定索引位置上数据以链表的形式存储  
+JDK7：元素a放入数组中，指向原来的元素  
+JDK8：原来的元素在数组中，指向元素a  
+
+HashSet底层：数据+链表的结构 (前提是在JDK7环境下)
+
+#### 11.5.3 常用方法
+Set接口中没有额外定义新的方法，使用的都是Collection中声明过的方法。
+
+#### 11.5.4 常用实现类
+      |----Collection接口：单列集合，用来储存一个一个的对象  
+          |----Set接口：储存无序的、不可重复的数据  ---- 类似于数学意义的"集合"  
+              |----HashSet: 作为Set接口的主要实现类；线程不安全，可以储存null值  
+                  |----LinedHashSet: 作为HashSet的子类；遍历其内部数据时，可以按照添加的顺序遍历(在添加数据的同时，每个数据还维护了两个引用，记录此数据前一个数据和后一个数据)
+              |----TreeSet: 可以按照添加对象的指定属性进行排序。  
+优点：对于频繁的遍历操作，LinkedHashSet效率高于HashSet)
+#### 11.5.5 储存对象所在类的要求
+HashSet/LinkedHashSet  
++ 向Set(主要指HashSet和LinkedHashSet)中添加的数据，其所在的类一定要重写hashCode()和equals()  
++ 重写的hashCode和equals()尽可能保持一致性：相等的对象必须具有相等的散列码  
++ 重写两个方法的技巧：对象中用作equals()方法比较的Field，都应该用来计算hashCode值。  
+
+TreeSet
++ 自然排序中，比较两个对象是否相同的标准为：compareTo()返回0，不再是equals()。  
++ 定制排序中，比较两个对象是否相同的标准为：compare()返回0，不再是equals()。  
+
+#### 11.5.6 TreeSet的使用
+##### 使用说明
+1. 向TreeSet中添加的数据，要求是相同类的对象  
+2. 两种排序方式：自然排序(实现Comparable接口)和定制排序(实现Comparator)  
+
+##### 常用的排序方式
+自然排序：  
+````
+    @Test
+    public void test3(){
+        TreeSet treeSet = new TreeSet();
+        treeSet.add(new User("Tom", 16));
+        treeSet.add(new User("LX", 18));
+        treeSet.add(new User("abc", 33));
+        treeSet.add(new User("LUX", 80));
+        treeSet.add(new User("HII", -55));
+
+        Iterator iterator = treeSet.iterator();
+        while (iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
+    }
+````
+定制排序：
+````
+    @Test
+    public void test4(){
+        Comparator comparator = new Comparator(){
+            //按照年龄从小到大排列
+            @Override
+            public int compare(Object o1, Object o2) {
+                if (o1 instanceof User && o2 instanceof User){
+                    User user1 = (User) o1;
+                    User user2 = (User) o2;
+                    return Integer.compare(user1.getAge(), user2.getAge());
+                } else {
+                    throw new RuntimeException("输入输入年龄不匹配");
+                }
+            }
+        };
+        TreeSet set = new TreeSet(comparator);
+        set.add(new User("Tom", 16));
+        set.add(new User("LX", 18));
+        set.add(new User("abc", 33));
+        set.add(new User("LUX", 80));
+        set.add(new User("HII", -55));
+
+        Iterator iterator = set.iterator();
+        while (iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
+    }
+````
 
 
 
