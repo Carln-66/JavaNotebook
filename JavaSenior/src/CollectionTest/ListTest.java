@@ -185,7 +185,7 @@ public class ListTest {
 
 }
 
-class Person{
+class Person implements Comparable{
     private String name;
     private int age;
 
@@ -211,5 +211,27 @@ class Person{
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Person)) return false;
+        Person person = (Person) o;
+        return age == person.age && Objects.equals(name, person.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age);
+    }
+
+    public int compareTo(Object o){
+        if (o instanceof Person){
+            Person person = (Person) o;
+            return -this.name.compareTo(person.name);
+        }else {
+            throw new RuntimeException("输入类型不匹配");
+        }
     }
 }
