@@ -1,4 +1,4 @@
-package CollectionTest;
+package CollectionTest.SetTest;
 
 import java.util.Objects;
 
