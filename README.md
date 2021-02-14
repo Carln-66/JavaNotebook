@@ -3533,7 +3533,7 @@ public class SubOrder1<E> extends Order<E> {    //SubOrder1<E> 仍然是泛型�
     
 **结论：子类必须是“富二代”，子类除了指定或保留父类的泛型，还可以增加自己的泛型**
 
-#### 11.3.3 应用场景举例
+#### 12.3.3 应用场景举例
 【DAO.java】：定义了操作数据库中的表的通用操作。     ORM思想(数据库中的表和Java中的类对应)
 ````
 public class DAO<T> {   //表的共性操作的DAO
@@ -3580,7 +3580,7 @@ public class CustomerDAO extends DAO<Customer> {    //只能操作某一个表�
 public class StudentDAO extends DAO<Student> {  //只能操作某一个表的DAO
 }
 ````
-### 11.4 泛型在继承上的体现
+### 12.4 泛型在继承上的体现
 ````
    /*
     虽然类A是类B的父类，但是G<A>和G<B>二者不具备子父类关系，二者是并列关系
@@ -3602,8 +3602,8 @@ public class StudentDAO extends DAO<Student> {  //只能操作某一个表的DAO
 //      list1 = list2;
     }
 ````
-### 11.5 通配符
-#### 11.5.1 涉及通配符的集合的数据的写入和读取
+### 12.5 通配符
+#### 12.5.1 涉及通配符的集合的数据的写入和读取
 ````
     /*
     通配符的使用
@@ -3647,7 +3647,7 @@ public class StudentDAO extends DAO<Student> {  //只能操作某一个表的DAO
 }
 ````
 
-#### 11.5.2 涉及有限制条件的通配符的使用
+#### 12.5.2 涉及有限制条件的通配符的使用
 ````
     /*
         ? extends A：
@@ -3674,3 +3674,61 @@ public class StudentDAO extends DAO<Student> {  //只能操作某一个表的DAO
         list2 = list5;
     }
 ````
+
+## 13 IO流
+### 13.1 File类的使用
+#### 13.1.1 File类的理解 
+1. File类的一个对象就代表一个文件或一个文件目录(俗称文件夹)  
+2. File类声明在java.io包下  
+3. File类中涉及到关于文件或文件目录的创建、删除、重命名、修改时间、文件大小等方法并未涉及到写入或读取文件内容的操作。如果需要读取或写入文件内容，必须使用IO流完成。  
+4. 后续File类的对象常会作为参数传递到流的构造器中，指明读取或写入的"终点"。  
+#### 13.1.2 File的实例化
+##### 常用构造器
+File(String filePath)  
+File(String parentPath, String childPath)  
+##### 路径的分类
+相对路径：相较于某个路径下，指明路径  
+绝对路径：包含盘符在内的文件或文件目录的路径  
+说明：  
+a. 在IDEA中，如果开发使用JUnit中的单元测试方法测试，相对路径即为当前的Module下。  
+    如果使用main()测试，相对路径即为当前的Project下。  
+b. 在Eclipse中，不管使用单元测试方法还是main()测试，相对路径都是当前的Project下。
+
+##### 路径分隔符
+Windows和DOS系统默认使用'\'来表示  
+UNIX和URL使用'/'来表示  
+#### 13.1.3 File类的常用方法
++ public String getAbsolutePath()：获取绝对路径
++ public String getPath() ：获取路径
++ public String getName() ：获取名称
++ public String getParent()：获取上层文件目录路径。若无，返回null
++ public long length() ：获取文件长度（即：字节数）。不能获取目录的长度。
++ public long lastModified() ：获取最后一次的修改时间，毫秒值
+  
+以下两个方法适用于文件目录  
++ public String[] list() ：获取指定目录下的所有文件或者文件目录的名称数组
++ public File[] listFiles() ：获取指定目录下的所有文件或者文件目录的File数组  
+
+File类的重命名功能  
++ public boolean renameTo(File dest):把文件重命名为指定的文件路径
+
+File类的判断功能  
++ public boolean isDirectory()：判断是否是文件目录
++ public boolean isFile() ：判断是否是文件
++ public boolean exists() ：判断是否存在
++ public boolean canRead() ：判断是否可读
++ public boolean canWrite() ：判断是否可写
++ public boolean isHidden() ：判断是否隐藏
+
+File类的创建功能  
++ public boolean createNewFile() ：创建文件。若文件存在，则不创建，返回false
++ public boolean mkdir() ：创建文件目录。如果此文件目录存在，就不创建了。 如果此文件目录的上层目录不存在，也不创建。
++ public boolean mkdirs() ：创建文件目录。如果上层文件目录不存在，一并创建
+
+*注意事项：如果你创建文件或者文件目录没有写盘符路径，那么，默认在项目
+路径下。*
+
+File类的删除功能  
++ public boolean delete()：删除文件或者文件夹  
+
+*删除注意事项：Java中的删除不走回收站。要删除一个文件目录，请注意该文件目录内不能包含文件或者文件目录*
