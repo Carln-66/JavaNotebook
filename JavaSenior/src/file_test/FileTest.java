@@ -177,6 +177,11 @@ public class FileTest {
         if (mkdir1) {
             System.out.println("多级目录创建成功！");
         }
+
+        //文件目录的删除
+        //若想删除成功，io1.4目录下不能有子目录或文件
+        File file3 = new File("D:\\io\\io1.3\\io1.4");
+        System.out.println(file3.delete());
     }
 }
 
