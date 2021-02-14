@@ -43,7 +43,7 @@ public class GenericTest {
         }
     }
 
-    //集合中使用泛型之前的情况
+    //集合中使用泛型的情况
     @Test
     public void test2() {
         ArrayList<Integer> arrayList = new ArrayList<Integer>();
