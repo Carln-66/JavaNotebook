@@ -3603,6 +3603,7 @@ public class StudentDAO extends DAO<Student> {  //只能操作某一个表的DAO
     }
 ````
 ### 11.5 通配符
+#### 11.5.1 涉及通配符的集合的数据的写入和读取
 ````
     /*
     通配符的使用
@@ -3643,9 +3644,12 @@ public class StudentDAO extends DAO<Student> {  //只能操作某一个表的DAO
             System.out.println(next);
         }
     }
+}
+````
 
+#### 11.5.2 涉及有限制条件的通配符的使用
+````
     /*
-    有限制条件的通配符的使用
         ? extends A：
             G<? extends A> 可以作为G<A>和G<B>的父类的，其中B是A的子类
 
@@ -3669,5 +3673,4 @@ public class StudentDAO extends DAO<Student> {  //只能操作某一个表的DAO
         list2 = list4;
         list2 = list5;
     }
-}
 ````
