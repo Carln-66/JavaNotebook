@@ -2,9 +2,23 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/JavaSenior/AnnotationTest/AnnotationTest.iml" filepath="$PROJECT_DIR$/JavaSenior/AnnotationTest/AnnotationTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaBasic/ClassAndMethod/ClassAndMethod.iml" filepath="$PROJECT_DIR$/JavaBasic/ClassAndMethod/ClassAndMethod.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaSenior/CollectionTest/CollectionTest.iml" filepath="$PROJECT_DIR$/JavaSenior/CollectionTest/CollectionTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaSenior/EnumClass/EnumClass.iml" filepath="$PROJECT_DIR$/JavaSenior/EnumClass/EnumClass.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaBasic/Exceptions/Exceptions.iml" filepath="$PROJECT_DIR$/JavaBasic/Exceptions/Exceptions.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaSenior/FileTest/FileTest.iml" filepath="$PROJECT_DIR$/JavaSenior/FileTest/FileTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaSenior/GenericTest/GenericTest.iml" filepath="$PROJECT_DIR$/JavaSenior/GenericTest/GenericTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaSenior/IO/IO.iml" filepath="$PROJECT_DIR$/JavaSenior/IO/IO.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaBasic/Inheritance/Inheritance.iml" filepath="$PROJECT_DIR$/JavaBasic/Inheritance/Inheritance.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaBasic/Interface/Interface.iml" filepath="$PROJECT_DIR$/JavaBasic/Interface/Interface.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaBasic/JUnitTest/JUnitTest.iml" filepath="$PROJECT_DIR$/JavaBasic/JUnitTest/JUnitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/JavaBasic/JavaBasic.iml" filepath="$PROJECT_DIR$/JavaBasic/JavaBasic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaSenior/JavaGeneralClass/JavaGeneralClass.iml" filepath="$PROJECT_DIR$/JavaSenior/JavaGeneralClass/JavaGeneralClass.iml" />
       <module fileurl="file://$PROJECT_DIR$/JavaSenior/JavaSenior.iml" filepath="$PROJECT_DIR$/JavaSenior/JavaSenior.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaBasic/OOP/OOP.iml" filepath="$PROJECT_DIR$/JavaBasic/OOP/OOP.iml" />
       <module fileurl="file://$PROJECT_DIR$/TeamScheduleSystem/TeamScheduleSystem.iml" filepath="$PROJECT_DIR$/TeamScheduleSystem/TeamScheduleSystem.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaSenior/Thread/Thread.iml" filepath="$PROJECT_DIR$/JavaSenior/Thread/Thread.iml" />
     </modules>
   </component>
 </project>
