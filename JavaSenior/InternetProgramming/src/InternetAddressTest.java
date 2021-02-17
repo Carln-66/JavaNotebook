@@ -21,6 +21,18 @@ import java.net.UnknownHostException;
  *  4. 域名： 例如：www.baidu.com
  *  5. 本地回路地址：127.0.0.1 对应着：localhost
  *  6. 如何实例化InetAddress：两个方法：getByName(String host)、getLocalHost()
+ *      两个常用方法：hetHostName()/getHostAddress()
+ *
+ *  7. 端口号：正在计算机上运行的进程。
+ *      要求：不同的进程有不同的端口号
+ *      范围：被规定为一个16位的整数0-65535
+ *  8. 公认端口：0-1023.呗预先定义的服务通信占用(如：HTTP占用端口80，FTP占用端口21，TeInet占用端口23)
+ *      注册端口：1024-49151.分配给用户进程或应用程序。(如Tomcat占用端口8080，MySQL占用端口3306，Oracle占用端口1521等)。
+ *      动态/私有端口：49152-65535
+ *
+ *      端口号与IP地址组合得出一个网络套接字：Socket
+ *
+ *
  *
  *
  *
@@ -38,8 +50,15 @@ public class InternetAddressTest {
             InetAddress inet3 = InetAddress.getByName("localhost");
             System.out.println(inet3);
 
+            //获取本机IP
             InetAddress localHost = InetAddress.getLocalHost();
             System.out.println(localHost);
+
+            //getHostName()
+            System.out.println(inet2.getHostName());
+
+            //getHostAddress()
+            System.out.println(inet2.getHostAddress());
 
 
         } catch (UnknownHostException e) {
