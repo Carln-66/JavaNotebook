@@ -15,7 +15,7 @@ import java.io.*;
  *  二、流的体系结构
  *  抽象基类                节点流                                                 缓冲流(处理流的一种)
  *  InputStream         FileInputStream  (read(byte[] buffer))                BufferedInputStream  (read(byte[] buffer))
- *  OutStream           FileOutputStream  (write(byte[] buffer, 0, len))      BufferedOutputStream  (write(byte[] buffer, 0, len))
+ *  OutputStream           FileOutputStream  (write(byte[] buffer, 0, len))      BufferedOutputStream  (write(byte[] buffer, 0, len))
  *  Reader              FileReader  (read(char[] cbuf))                       BufferedReader  (read(char[] cbuf) / readLine())
  *  Writer              FileWriter  (write(char[] cbuf, 0, len))              BufferedWriter  (write(char[] cbuf, 0, len))
  *
