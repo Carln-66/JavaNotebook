@@ -4253,11 +4253,781 @@ System.out: 标准的输出流，默认从控制台输出
 
 ### 13.7 对象流的使用
 #### 13.7.1 对象流
-序列化：
-反序列化：
-#### 13.7.2 对象的序列化机制
+ObjectInputStream 和 ObjectOutputStream
+#### 13.7.2 作用
+ObjectOutputStream: 内存中的对象 ---> 存储中的文件、通过网络传输出去  ---序列化
+ObjectInputStream: 存储中的文件、通过网络接收过来 ---> 内存中的对象  
+#### 13.7.3 对象的序列化机制
+**对象序列化机制**允许把内存中的java对象转换成平台无关的二进制流，从而允许把这种二进制流持久的保存在磁盘上，或通过网络将这种二进制流传输到另一个网络节点。当其他程序获取了这种二进制流，就可以恢复成原来的Java对象。
+#### 13.7.4 序列化过程
+代码实现
+````
+    /*
+        序列化过程：将内存中的java对象保存到磁盘中或通过网络传输出去
+        使用ObjectOutputStream实现
+     */
+    @Test
+    public void testObjectOutputStream(){
+        ObjectOutputStream oos = null;
+        try {
+            //造流、对象
+            oos = new ObjectOutputStream(new FileOutputStream("Object.dat"));
+            //写入
+            oos.writeObject(new String("这是一个测试"));
+            oos.flush();    //刷新
 
-#### 13.7.3 实现序列化的类需要满足
+            oos.writeObject(new Person("张三", 18));
+            oos.flush();
+
+            oos.writeObject(new Person("李四", 250, new Account(5000.0)));
+            oos.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+        //关闭流
+            if (oos != null) {
+                try {
+                    oos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+````
+#### 13.7.5 反序列化过程
+代码实现
+````
+    /*
+        反序列化：将磁盘文件中的对象还原为内存中的一个java对象
+        使用ObjectInputStream
+     */
+    @Test
+    public void testObjectInputStream(){
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new FileInputStream("Object.dat"));
+            Object object = ois.readObject();
+            String str = (String) object;
+
+            Person p = (Person) ois.readObject();
+            Person p1 = (Person) ois.readObject();
+
+            System.out.println(str);
+            System.out.println(p);
+            System.out.println(p1);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+````
+#### 13.7.6 实现序列化的对象所属的类需要满足
++ 需要实现接口：Serializable  
++ 当前类提供一个全局常量：serialVersionUID  
++ 除了当前Person类需要实现Serializable接口之外，还必须保证其内部所有属性也必须是可序列化的。(默认情况下，基本数据类型可序列化)  
+
+补充：ObjectOutputStream和ObjectInputStream不能序列化static和transient修饰的成员变量  
+### 13.8 RandomAccessFile的使用
+#### 13.8.1 随机存取文件流：RandomAccessFile
+
+#### 13.8.2 使用说明
+1. RandomAccessFile直接继承于java.lang.Object类，实现了DataInput和DataOutput接口
+2. RandomAccessFile既可以作为一个输入流，也可以作为一个输出流
+3. 如果RandomAccessFile作为输出流时，写出到的文件如果不存在，则执行过程中自动创建。如果写出到的文件存在，则会对源文件的内容进行覆盖。(默认情况下从头覆盖)
+4. 可以通过相关的操作，实现RandomAccessFile"插入"数据的效果
+
+#### 13.8.3 代码示例
+典型代码1
+````
+    @Test
+    public void test1(){
+        RandomAccessFile raf1 = null;
+        RandomAccessFile raf2 = null;
+        try {
+            raf1 = new RandomAccessFile(new File("头像.jpg"), "r");
+            raf2 = new RandomAccessFile(new File("新头像.jpg"), "rw");
+
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = raf1.read(buffer)) != -1) {
+                raf2.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (raf1 != null) {
+                try {
+                    raf1.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (raf2 != null) {
+                try {
+                    raf2.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+````
+
+典型代码2：
+````
+    /*
+        使用RandomAccessFile实现插入效果
+     */
+    @Test
+    public void test3() throws IOException {
+        RandomAccessFile raf1 = new RandomAccessFile("Test.txt", "rw");
+
+        raf1.seek(8);   //  把指针调到角标为8的位置
+        //保存指针后的所有数据到StringBuilder中
+        StringBuilder builder = new StringBuilder((int) new File("Test.txt").length());
+        byte[] buffer = new byte[5];
+        int len;
+        while ((len = raf1.read(buffer)) != -1) {
+            builder.append(new String(buffer, 0, len));
+        }
+        //调回指针，写入字符串
+        raf1.seek(8);
+        raf1.write("(Hi! It's me!)".getBytes());
+        //将StringBuilder中的数据写入到文件中
+        raf1.write(builder.toString().getBytes());
+
+        raf1.close();
+    }
+````
+### 13.9 Path、Paths、Files的使用
+#### 13.9.1 NIO的使用说明
+Java NIO(New IO, Non-Blocking IO)是Java1.4版本开始引入的一套新的IO API，可以替代标准的Java IO API  
+NIO与原来的IO有同样的作用和目的，但是使用的方式完全不同，NIO支持面向缓冲区的(IO是面向流的)、基于普通通道的IO操作。  
+NIO将以更高效的方式进行文件的读写操作。  
+随着 JDK 7 的发布，Java对NIO进行了极大的扩展，增强了对文件处理和文件系统特性的支持，以至于我们称他们为 NIO.2。  
+
+#### 13.9.2 Path的使用 ---JDK7提供
+##### Path的使用说明
+Path替换原有的File类。
+##### 如何实例化
+Paths 类提供的静态 get()方法用来获取Path对象：  
+>static Path get(String first, String … more) : 用于将多个字符串串连成路径  
+>static Path get(URI uri): 返回指定uri对应的Path路径  
+##### 常用方法
++ String toString(): 返回调用 Path 对象的字符串表示形式
++ boolean startsWith(String path): 判断是否以 path 路径开始
++ boolean endsWith(String path): 判断是否以 path 路径结束
++ boolean isAbsolute(): 判断是否是绝对路径
++ Path getParent(): 返回Path对象包含整个路径，不包含 Path 对象指定的文件路径
++ Path getRoot(): 返回调用 Path 对象的根路径
++ Path getFileName(): 返回与调用 Path 对象关联的文件名
++ int getNameCount(): 返回Path 根目录后面元素的数量
++ Path getName(int idx): 返回指定索引位置 idx 的路径名称
++ Path toAbsolutePath(): 作为绝对路径返回调用 Path 对象
++ Path resolve(Path p):合并两个路径，返回合并后的路径对应的Path对象
++ File toFile(): 将Path转化为File类的对象
+
+#### 13.9.3 Files工具类 ---JDK7提供
+1. 作用：操作文件或文件目录的工具类
+2. 常用方法
++ Path copy(Path src, Path dest, CopyOption … how): 文件的复制
++ Path createDirectory(Path path, FileAttribute<?> … attr): 创建一个目录
++ Path createFile(Path path, FileAttribute<?> … arr): 创建一个文件
++ void delete(Path path) : 删除一个文件/目录，如果不存在，执行报错
++ void deleteIfExists(Path path): Path对应的文件/目录如果存在，执行删除
++ Path move(Path src, Path dest, CopyOption…how): 将 src 移动到 dest 位置
++ long size(Path path): 返回 path 指定文件的大小
+
+Files常用方法：用于判断    
++ boolean exists(Path path, LinkOption … opts): 判断文件是否存在
++ boolean isDirectory(Path path, LinkOption … opts): 判断是否是目录
++ boolean isRegularFile(Path path, LinkOption … opts): 判断是否是文件
++ boolean isHidden(Path path): 判断是否是隐藏文件
++ boolean isReadable(Path path): 判断文件是否可读
++ boolean isWritable(Path path): 判断文件是否可写
++ boolean notExists(Path path, LinkOption … opts): 判断文件是否不存在
+
+Files常用方法：用于操作内容  
++ SeekableByteChannel newByteChannel(Path path, OpenOption…how): 获取与指定文件的连接，how 指定打开方式。
++ DirectoryStream<Path> newDirectoryStream(Path path): 打开 path 指定的目录
++ InputStream newInputStream(Path path, OpenOption…how):获取 InputStream 对象
++ OutputStream newOutputStream(Path path, OpenOption…how): 获取 OutputStream 对象
+
+## 14. 网络编程
+### 14.1 InetAddress类的使用
+#### 14.1.1 实现网络通信需要解决的两个问题
+1. 如何准确地定位网络上一台或多台主机：定位主机上的特定应用  
+2. 找到主机后如何可靠高效的进行数据传输  
+####14.1.2 网络通信的两个要素
+1. 对应问题一：IP和端口号  
+2. 对应问题二：提供网络通信协议：TCP/IP参考模型(应用层、传输层、网络层、物理+数据链路层)  
+
+#### 14.1.3 通信要素一：IP和端口号
+##### IP的理解
+1. IP：唯一的表示Internet上的计算机(通讯实体)
+2. 在java中使用InetAddress类代表IP
+3. IP分类：IPv4和IPv6；万维网 和 局域网。
+4. 域名： 例如：www.baidu.com
+   域名解析：域名容易记忆，当在连接网络时输入一个主机的域名后，域名服务器(DNS)负责将域名转化成IP地址，这样才能和主机建立连接。 -------域名解析
+5. 本地回路地址：127.0.0.1 对应着：localhost
+
+##### InetAddress类：此类的一个对象就代表着一个具体的IP地址
+1. 实例化
+如何实例化InetAddress：两个方法：getByName(String host)、getLocalHost()  
+两个常用方法：hetHostName()/getHostAddress()  
+2. 常用方法  
+getHostName() / getHostAddress()  
+3. 端口号
+正在计算机上运行的进程。  
+   要求：不用的进程不同的端口号  
+   范围：被规定位一个16位的整数0~65535.  
+   公认端口：0-1023.呗预先定义的服务通信占用(如：HTTP占用端口80，FTP占用端口21，TeInet占用端口23)  
+   注册端口：1024-49151.分配给用户进程或应用程序。(如Tomcat占用端口8080，MySQL占用端口3306，Oracle占用端口1521等)。  
+   动态/私有端口：49152-65535  
+
+端口号与IP地址组合得出一个网络套接字：Socket
+   
+#### 14.1.4 通信要素之二：网络通信协议
+##### 分型模型
+![网络通讯协议](https://raw.githubusercontent.com/Carln-66/img/main/%E7%BD%91%E7%BB%9C%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE.png)
+##### TCP和UDP的区别
++ TCP协议：
+    + 使用TCP协议前，须先建立TCP连接，形成传输数据通道
+    + 传输前，采用“三次握手”方式，点对点通信，是可靠的
+    + TCP协议进行通信的两个应用进程：客户端、服务端。
+    + 在连接中可进行大数据量的传输
+    + 传输完毕，需释放已建立的连接，效率低
++ UDP协议：
+    + 将数据、源、目的封装成数据包，不需要建立连接
+    + 每个数据报的大小限制在64K内
+    + 发送不管对方是否准备好，接收方收到也不确认，故是不可靠的
+    + 可以广播发送
+    + 发送数据结束时无需释放资源，开销小，速度快
+    
+##### TCP三次握手和四次挥手
+三次握手
+![三次握手](https://raw.githubusercontent.com/Carln-66/img/main/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.png)
+
+----
+四次挥手
+![四次挥手](https://raw.githubusercontent.com/Carln-66/img/main/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png)
+
+### 14.2 TCP网络编程
+#### 14.2.1 代码示例1：客户端发送信息给服务端，服务端将数据显示在控制台上  
+````
+public class TCPTest1 {
+
+    //客户端
+    @Test
+    public void client() {
+        Socket socket = null;
+        OutputStream os = null;
+        try {
+
+            //1. 创建Socket对象，指明服务器端IP和端口号
+            InetAddress inet = InetAddress.getByName("127.0.0.1");
+            socket = new Socket(inet, 55566);
+            //2. 获取一个输出流，用于输出数据
+            os = socket.getOutputStream();
+            //3. 写出数据
+            os.write("客户端测试".getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            //4. 关闭资源
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    //服务端
+    @Test
+    public void server(){
+
+        ServerSocket serverSocket = null;
+        InputStream is = null;
+        ByteArrayOutputStream baos = null;
+        Socket socket = null;
+        try {
+            //1. 创建Server的Socket，指明自己的端口号
+            serverSocket = new ServerSocket(55566);
+
+            //2. 调用accept()方法接受来自于客户端的socket
+            socket = serverSocket.accept();
+
+            //3. 获取输入流
+            is = socket.getInputStream();
+
+            //由于可能出现乱码，因而不推荐这种写法
+//        char[] buffer= new char[1024];
+//        int len;
+//        while ((len = is.read(buffer)) != -1) {
+//            String str = new String(buffer, 0, len);
+//            System.out.println(str);
+//        }
+
+            //4. 读取输入流中的数据
+            baos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = is.read(buffer)) != -1) {
+                baos.write(buffer, 0, len);
+            }
+
+            //输出客户端输入的内容
+            System.out.println(baos.toString());
+            //获取客户端IP地址
+            System.out.println(socket.getInetAddress());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            //5. 关闭资源
+            if (baos != null) {
+                try {
+                    baos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (serverSocket != null) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+}
+````
+
+#### 14.2.2 代码示例2：客户端发送文件给服务器，服务端将文件保存在本地。  
+````
+public class TCPTest2 {
+
+    //客户端
+    @Test
+    public void client(){
+
+        Socket socket = null;
+        OutputStream os = null;
+        FileInputStream fis = null;
+        try {
+            socket = new Socket(InetAddress.getByName("127.0.0.1"), 22333);
+
+            os = socket.getOutputStream();
+
+            fis = new FileInputStream(new File("头像.jpg"));
+
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    //服务器端
+    @Test
+    public void server(){
+        ServerSocket ss = null;
+        Socket socket = null;
+        InputStream is = null;
+        FileOutputStream fos = null;
+        try {
+            //1. 造ServerSocket
+            ss = new ServerSocket(22333);
+            //2. 获取客户端Socket
+            socket = ss.accept();
+            //3. 获取客户端的输入流
+            is = socket.getInputStream();
+            //4. 保存到本地，建里FileOutputStream
+            fos = new FileOutputStream("复制头像.jpg");
+            //5. 读写过程
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = is.read(buffer)) != -1) {
+                fos.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            //6. 关闭资源
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (ss != null) {
+                try {
+                    ss.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+}
+````
+
+#### 14.2.3 代码示例3：从客户端发送文件给服务端，服务端保存到本地，并返回"发送成功"给客户端，最后关闭相应的连接。  
+````
+public class TCPTest3 {
+
+    //客户端
+    @Test
+    public void client() {
+
+        Socket socket = null;
+        OutputStream os = null;
+        FileInputStream fis = null;
+        InputStream is = null;
+        ByteArrayOutputStream baos = null;
+
+        try {
+            socket = new Socket(InetAddress.getByName("127.0.0.1"), 22333);
+
+            os = socket.getOutputStream();
+
+            fis = new FileInputStream(new File("头像.jpg"));
+
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, len);
+            }
+
+            //关闭数据的输出
+            socket.shutdownOutput();
+
+            //接受来自于服务器端的数据，并显示到控制台上
+            is = socket.getInputStream();
+            baos = new ByteArrayOutputStream();
+            byte[] buffer1 = new byte[20];
+            int len1;
+            while ((len1 = is.read(buffer1)) != -1) {
+                baos.write(buffer1, 0, len1);
+            }
+            System.out.println(baos.toString());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (baos != null) {
+                try {
+                    baos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    //服务器端
+    @Test
+    public void server() {
+        ServerSocket ss = null;
+        Socket socket = null;
+        InputStream is = null;
+        FileOutputStream fos = null;
+        OutputStream os = null;
+        try {
+            //1. 造ServerSocket
+            ss = new ServerSocket(22333);
+            //2. 获取客户端Socket
+            socket = ss.accept();
+            //3. 获取客户端的输入流
+            is = socket.getInputStream();
+            //4. 保存到本地，建里FileOutputStream
+            fos = new FileOutputStream("复制头像.jpg");
+            //5. 读写过程
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = is.read(buffer)) != -1) {
+                fos.write(buffer, 0, len);
+            }
+
+            //6. 服务器端给予反馈
+            os = socket.getOutputStream();
+            os.write("文件复制成功".getBytes());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            //7. 关闭资源
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (ss != null) {
+                try {
+                    ss.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+}
+````
+
+### 14.3 UDP网络编程
+````
+public class UDPTest {
+
+    //发送端
+    @Test
+    public void sender() {
+        DatagramSocket socket = null;
+        try {
+            socket = new DatagramSocket();
+
+            String str = "UDP Test";
+            byte[] data = str.getBytes();
+            InetAddress inet = InetAddress.getLocalHost();
+            DatagramPacket packet = new DatagramPacket(data, 0, data.length, inet, 5656);
+
+            socket.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            socket.close();
+        }
+    }
+
+    //接收端
+    @Test
+    public void receiver() {
+        DatagramSocket socket = null;
+        try {
+            socket = new DatagramSocket(5656);
+
+            byte[] buffer = new byte[1024];
+
+            DatagramPacket packet = new DatagramPacket(buffer, 0, buffer.length);
+
+            socket.receive(packet);
+
+            System.out.println(new String(packet.getData(), 0, packet.getLength()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            socket.close();
+        }
+    }
+}
+````
+   
+### 14.4 URL编程
+#### 14.4.1 URL(Uniform Resource Locator)的理解：
+统一资源定位符，对应着互联网的某一资源地址
+#### 14.4.2 URL的五个基本结构
+    URL格式: http://localhost:8080/examples/test.txt?myname=carl  
+             协议      主机名 端口号 资源地址           参数列表  
+
+#### 14.4.3 如何实例化
+> URL url = new URL("http://localhost:8080/examples/test.txt?username=Tom");
+#### 14.4.4 常用方法
++ public String getProtocol( ) 获取该URL的协议名
++ public String getHost( ) 获取该URL的主机名
++ public String getPort( ) 获取该URL的端口号
++ public String getPath( ) 获取该URL的文件路径
++ public String getFile( ) 获取该URL的文件名
++ public String getQuery( ) 获取该URL的查询名
+
+#### 14.4.5 可以读取、下载对应的url的资源
+````
+public class URLTest1 {
+    public static void main(String[] args) {
+        HttpURLConnection urlConnection = null;
+        InputStream is = null;
+        FileOutputStream fos = null;
+        try {
+            URL url = new URL("http://localhost:8080/examples/%E5%A4%B4%E5%83%8F.jpg");
+
+            urlConnection = (HttpURLConnection) url.openConnection();
+
+            urlConnection.connect();
+
+            is = urlConnection.getInputStream();
+
+            fos = new FileOutputStream("本地保存头像.jpg");
+
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = is.read(buffer)) != -1) {
+                fos.write(buffer, 0, len);
+            }
+            System.out.println("下载完成。");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+    }
+}
+````
+
+
+
+
+
+
+
 
 
 
