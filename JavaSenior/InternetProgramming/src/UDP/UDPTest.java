@@ -32,8 +32,6 @@ public class UDPTest {
         } finally {
             socket.close();
         }
-
-
     }
 
     //接收端
@@ -55,7 +53,5 @@ public class UDPTest {
         } finally {
             socket.close();
         }
-
     }
-
 }
