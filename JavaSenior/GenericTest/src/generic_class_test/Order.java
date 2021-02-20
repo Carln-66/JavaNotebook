@@ -49,7 +49,7 @@ public class Order<T> {
 
     //泛型方法：在方法中出现了泛型的结构，泛型参数与类的泛型参数没有任何关系
     //换而言之，泛型方法所属的类是不是泛型类都没有关系
-    //泛型方法是可以声明为静态的。原因：泛型参数是在第哦啊用方法时确定的，并非在实例化时确定
+    //泛型方法是可以声明为静态的。原因：泛型参数是在调用方法时确定的，并非在实例化时确定
     public static  <E> List<E> copyFromArrayToList(E[] arr){
         ArrayList<E> list = new ArrayList<>();
 

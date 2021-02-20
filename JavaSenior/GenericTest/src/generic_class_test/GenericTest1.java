@@ -47,7 +47,7 @@ public class GenericTest1 {
         ArrayList<String> arrayList1 = null;
         ArrayList<Integer> arrayList2 = null;
 
-//        arrayList1 =arrayList2;
+//        arrayList1 = arrayList2;
         //报错
 //        Required type:ArrayList<String>
 //        Provided:ArrayList<Integer>

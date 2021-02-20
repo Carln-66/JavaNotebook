@@ -18,6 +18,7 @@
       <module fileurl="file://$PROJECT_DIR$/JavaSenior/JavaGeneralClass/JavaGeneralClass.iml" filepath="$PROJECT_DIR$/JavaSenior/JavaGeneralClass/JavaGeneralClass.iml" />
       <module fileurl="file://$PROJECT_DIR$/JavaSenior/JavaSenior.iml" filepath="$PROJECT_DIR$/JavaSenior/JavaSenior.iml" />
       <module fileurl="file://$PROJECT_DIR$/JavaBasic/OOP/OOP.iml" filepath="$PROJECT_DIR$/JavaBasic/OOP/OOP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaSenior/Reflection/Reflection.iml" filepath="$PROJECT_DIR$/JavaSenior/Reflection/Reflection.iml" />
       <module fileurl="file://$PROJECT_DIR$/TeamScheduleSystem/TeamScheduleSystem.iml" filepath="$PROJECT_DIR$/TeamScheduleSystem/TeamScheduleSystem.iml" />
       <module fileurl="file://$PROJECT_DIR$/JavaSenior/Thread/Thread.iml" filepath="$PROJECT_DIR$/JavaSenior/Thread/Thread.iml" />
     </modules>
