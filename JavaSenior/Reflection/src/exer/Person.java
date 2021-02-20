@@ -1,5 +1,7 @@
 package exer;
 
+import java.io.IOException;
+
 /**
  * @Auther: Carl
  * @Date: 2021/02/20/20:46
@@ -32,8 +34,8 @@ public class Person extends Creature<String> implements Comparable<String>, MyIn
         return nation;
     }
 
-    public String display(String interests){
-        return interests;
+    public String display(String interests, int year)throws IOException, NullPointerException {
+        return interests + year;
     }
 
     @Override
