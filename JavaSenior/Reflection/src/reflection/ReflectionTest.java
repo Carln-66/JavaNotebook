@@ -89,16 +89,17 @@ public class ReflectionTest {
     @Test
     public void test3() throws ClassNotFoundException {
         //方式一：调用运行时类的属性: .class
-        Class<Person> aClass1 = Person.class;
+        Class aClass1 = Person.class;
         System.out.println(aClass1);
 
         //方式二：通过运行时类的对象，调用getClass()方法
         Person p1 = new Person();
-        Class<? extends Person> aClass2 = p1.getClass();
+        Class aClass2 = p1.getClass();
         System.out.println(aClass2);
 
         //方式三：调用Class的静态方法：forName(String classPath)
-        Class<?> aClass3 = Class.forName("reflection.Person");
+        //该方法能够更好的体现动态性
+        Class aClass3 = Class.forName("reflection.Person");
         System.out.println(aClass3);
 
         System.out.println(aClass1 == aClass2);
