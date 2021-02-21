@@ -98,8 +98,5 @@ public class ReflectionTest {
         //3. 调用此构造器创建运行时类的对象
         Person person = (Person) constructor.newInstance("张三");
         System.out.println(person);
-
-
-
     }
 }
