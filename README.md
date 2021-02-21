@@ -5142,6 +5142,288 @@ java.lang.reflect.Constructor
 + primitive type: 基本数据类型
 + void 
 
+### 15.3 了解ClassLoader
+#### 15.3.1 类的加载过程---需要了解
+![类的加载过程](https://raw.githubusercontent.com/Carln-66/img/main/%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.png)
+
+#### 15.3.2 类的加载器的作用
+将class字节码文件加载到内存中，并将这些静态数据转换成方法区运行时的数据结构，然后在堆中生成一个代表这个类的java.lang.Class对象，作为方法区中类数据的访问入口。  
+类缓存：标准的JavaSE类加载器可以按照要求查找类，但是一旦某个类被加载到类加载器中，他将维持加载(缓存)一段时间。不过JVM垃圾回收机制可以回收这些Class对象。
+
+#### 15.3.3 类的加载器的分类
+![类的加载器](https://raw.githubusercontent.com/Carln-66/img/main/%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E5%99%A8.png)
+
+#### 15.3.4 Java类编译、运行的执行的流程
+![java类编译运行的流程](https://raw.githubusercontent.com/Carln-66/img/main/Java%E7%B1%BB%E7%BC%96%E8%AF%91%E8%BF%90%E8%A1%8C%E7%9A%84%E6%B5%81%E7%A8%8B.png)
+
+#### 15.3.5 使用ClassLoader加载src目录下的配置文件
+````
+     /*
+        Properties: 用来读取配置文件
+     */
+    @Test
+    public void test2() throws IOException {
+        Properties pros = new Properties();
+        //此时文件默认为当前module下
+        //读取配置文件
+        //方式一
+//        FileInputStream fis = new FileInputStream("jdbc.properties");
+//        pros.load(fis);
+
+        //方式二：使用ClassLoader
+        //配置文件默认识别为当前module的src下
+        ClassLoader classLoader = ClassLoaderTest.class.getClassLoader();
+        InputStream is = classLoader.getResourceAsStream("jdbc1.properties");
+        pros.load(is);
+
+        String user = pros.getProperty("user");
+        String password = pros.getProperty("password");
+        System.out.println("user = " + user + ", password = " + password);
+    }
+````
+### 15.4 反射应用一：创建运行时类的对象
+#### 15.4.1 代码举例
+````
+    @Test
+    public void test1() throws IllegalAccessException, InstantiationException {
+        Class<Person> aClass = Person.class;
+        Person p1 = aClass.newInstance();       //造运行时类的对象绝大多数情况都是调用此方法
+        System.out.println(p1);
+    }
+````
+
+#### 15.4.2 说明
+
+newInstance(): 调用此方法，创建对应的运行时类的对象。内部调用了运行时类的空参的构造器  
+
+要想此方法能够正常创建运行时类的对象，要求：  
+1. 运行时类必须提供空参的构造器  
+2. 提供满足条件的空参构造器权限修饰符。通常置为public。  
+    
+在javabean种要求提供一个public的空参构造器。原因：   
+1. 便于通过反射创建运行时类的对象  
+2. 便于子类继承此运行类时，默认调用super()时，保证父类有此构造器  
+
+### 15.5 反射应用二：获取运行时类的完整结构
+我们可以通过反射，获取对应的运行时类中的所有属性、方法、构造器、父类、接口、弗雷德泛型、包、注解、异常等等。
+
+#### 典型代码
+````
+    //获取属性
+    @Test
+    public void test1(){
+        Class aClass = Person.class;
+
+        //获取属性结构
+        //getFields(): 获取当前运行时类及其父类中声明为public访问权限的属性
+        Field[] fields = aClass.getFields();
+        for (Field f : fields){
+            System.out.println(f);
+        }
+
+        System.out.println();
+
+        //getDeclaredFields(): 获取当前运行时类种声明的所有属性(不包含父类种中声明的属性)
+        Field[] declaredFields = aClass.getDeclaredFields();
+        for (Field f : declaredFields){
+            System.out.println(f);
+        }
+    }
+    
+    //获取方法
+    @Test
+    public void test1() {
+        Class aClass = Person.class;
+
+        //getMethods(): 获取当前运行时类及其所有父类中声明为public权限的方法
+        Method[] methods = aClass.getMethods();
+        for (Method m : methods) {
+            System.out.println(m);
+        }
+
+        System.out.println();
+
+        //getDeclareMethods(): 获取当前运行时类中声明的所有方法(不包含父类中声明的)
+        Method[] declaredMethods = aClass.getDeclaredMethods();
+        for (Method m : declaredMethods) {
+            System.out.println(m);
+        }
+    }
+    
+    //其他结构
+    //获取构造器结构
+    @Test
+    public void test1() {
+        Class aClass = Person.class;
+        //getConstructors(): 获取当前运行时类中声明为public的构造器
+        Constructor[] constructors = aClass.getConstructors();
+        for (Constructor c : constructors) {
+            System.out.println(c);
+
+            System.out.println();
+
+            //getDeclaredConstructors(): 获取当前运行时类中声明的所有构造器
+            Constructor[] declaredConstructors;
+            declaredConstructors = aClass.getDeclaredConstructors();
+            for (Constructor c1 : declaredConstructors) {
+                System.out.println(c1);
+            }
+        }
+    }
+
+    /*
+        获取运行时类的父类
+     */
+    @Test
+    public void test2(){
+        Class aClass = Person.class;
+        Class superclass = aClass.getSuperclass();
+        System.out.println(superclass);
+    }
+
+    /*
+        获取运行时类的带泛型的父类
+     */
+    @Test
+    public void test3(){
+        Class aClass = Person.class;
+        Type genericSuperclass = aClass.getGenericSuperclass();
+        System.out.println(genericSuperclass);
+    }
+
+    /*
+        获取运行时类的带泛型的泛型
+
+        代码：
+        逻辑性代码
+        功能性代码
+     */
+    @Test
+    public void test4(){
+        Class aClass = Person.class;
+
+        Type genericSuperclass = aClass.getGenericSuperclass();
+        ParameterizedType parameterizedType = (ParameterizedType) genericSuperclass;
+        //获取泛型类型
+        Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+//        System.out.println(actualTypeArguments[0].getTypeName());
+        System.out.println(((Class) actualTypeArguments[0]).getName());
+    }
+
+    /*
+        获取运行时类实现的接口
+     */
+    @Test
+    public void test5(){
+        Class aClass = Person.class;
+        Class[] interfaces = aClass.getInterfaces();
+        for (Class c : interfaces){
+            System.out.println(c);
+        }
+
+        //获取运行时类的父类实现的接口
+        Class[] interfaces1 = aClass.getSuperclass().getInterfaces();
+        for (Class c : interfaces1){
+            System.out.println(c);
+        }
+    }
+
+    /*
+        获取运行时类所在的包
+     */
+    @Test
+    public void test6(){
+        Class aClass = Person.class;
+        Package aPackage = aClass.getPackage();
+        System.out.println(aPackage);
+    }
+
+    /*
+        获取运行时类声明的注解
+    */
+    @Test
+    public void test7(){
+        Class aClass = Person.class;
+        Annotation[] annotations = aClass.getAnnotations();
+        for (Annotation annos : annotations) {
+            System.out.println(annos);
+        }
+    }
+````
+
+### 15.6 反射应用三：调用运行时类的指定结构
+#### 调用指定的属性
+````
+    //如何获得运行时类中的指定的属性 -- 需要掌握
+    @Test
+    public void testField1() throws IllegalAccessException, InstantiationException, NoSuchFieldException {
+        Class aClass = Person.class;
+
+        //创建运行时类的对象
+        Person p = (Person) aClass.newInstance();
+
+        //1. getDeclaredField(String fieldName): 获取运行时类中指定变量名的属性
+        Field name = aClass.getDeclaredField("name");
+
+        //2. 保证当前属性是可访问的
+        name.setAccessible(true);
+
+        //3. 获取、设置指定对象的此属性值
+        name.set(p, "李四");
+        System.out.println(name.get(p));
+    }
+````
+#### **调用指定的方法**
+````
+    //如何操作运行时类中的指定方法 -- 需要掌握
+    @Test
+    public void testMethod() throws Exception {
+        Class aClass = Person.class;
+
+        //创建运行时类的对象
+        Person p = (Person) aClass.newInstance();
+
+        //1. 获取指定的某个方法
+        //getDeclaredMethod(): 参数1：指明获取的方法的名称   参数2：指明获取的方法的形参列表
+        Method declaredMethod = aClass.getDeclaredMethod("show", String.class);
+
+        //2. 保证当前方法是可访问的
+        declaredMethod.setAccessible(true);
+
+        //3. 调用invoke(): 参数1：方法的调用者  参数2：给方法形参赋值的实参
+        //invoke()的返回值与对应类中调用的方法的返回值相同
+        Object invoke = declaredMethod.invoke(p, "CHINA");  //String nation = p.show("CHINA")
+        System.out.println(invoke);
+
+        System.out.println("-------------调用静态方法--------------");
+
+        Method showDesc = aClass.getDeclaredMethod("showDesc");
+        showDesc.setAccessible(true);
+        //如果调用的运行时类中的方法没有返回值，则此invoke()返回null
+        Object invoke1 = showDesc.invoke(Person.class);
+        System.out.println(invoke1);
+    }
+````
+#### 调用指定的构造器
+````
+    //如何调用运行时类中指定的构造器：实际中应用较少，原因是不具备通用性
+    @Test
+    public void testConstructor() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        Class aClass = Person.class;
+        //private Person(String name)
+        //1. 获取指定的构造器
+        //getDeclaredConstructor(): 参数：指明构造器的参数列表
+        Constructor constructor = aClass.getDeclaredConstructor(String.class);
+
+        //2. 保证构造器是可访问的
+        constructor.setAccessible(true);
+
+        //3. 调用此构造器创建运行时类的对象
+        Person person = (Person) constructor.newInstance("张三");
+        System.out.println(person);
+    }
+````
+### 15.7 反射应用四：动态代理
 
 
 
