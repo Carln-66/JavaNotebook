@@ -61,7 +61,6 @@ public class NewInstanceTest {
                 e.printStackTrace();
             }
         }
-
     }
 
     //创建一个指定类的对象
