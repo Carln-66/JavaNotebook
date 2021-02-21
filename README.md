@@ -4470,6 +4470,7 @@ Files常用方法：用于操作内容
 #### 14.1.1 实现网络通信需要解决的两个问题
 1. 如何准确地定位网络上一台或多台主机：定位主机上的特定应用  
 2. 找到主机后如何可靠高效的进行数据传输  
+
 ####14.1.2 网络通信的两个要素
 1. 对应问题一：IP和端口号  
 2. 对应问题二：提供网络通信协议：TCP/IP参考模型(应用层、传输层、网络层、物理+数据链路层)  
@@ -5021,10 +5022,125 @@ public class URLTest1 {
     }
 }
 ````
+## 15. Java反射机制
+### 15.1 反射的概述
+#### 15.1.1 本章的主要内容
+1. Java反射机制概述
+2. **理解Class类并获取Class实例**
+3. 类的加载与ClassLoader的理解
+4. **创建运行时类的对象**
+5. 获取运行时类的完整结构
+6. **调用运行时类的指定结构**
+7. 反射的应用：动态代理
 
+#### 15.1.2 关于反射的理解
+Reflection(反射)是被视为动态语言的关键，反射机制允许程序在执行期借助于Reflection API取得任何类的内部信息，并能直接操作任意对象的内部属性及其方法。
 
+**框架 = 反射 + 注解 + 设计模式**
 
+#### 15.1.3 体会反射机制的"动态性"
+````
+    //体会反射的动态性
+    @Test
+    public void test2() {
 
+        for (int i = 0; i < 100; i++) {
+
+            int num = new Random().nextInt(3);    //0,1,2
+            String classPath = "";
+            switch (num) {
+                case 0:
+                    classPath = "java.util.Date";
+                    break;
+                case 1:
+                    classPath = "java.lang.Object";
+                    break;
+                case 2:
+                    classPath = "reflection.Person";
+                    break;
+            }
+
+            Object instance = null;
+            try {
+                instance = getInstance(classPath);
+                System.out.println("i---" + i + "   " + instance);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //创建一个指定类的对象
+    public Object getInstance(String classPath) throws Exception {
+        Class aClass = Class.forName(classPath);
+        return aClass.newInstance();
+    }
+````
+
+#### 15.1.4 反射机制能提供的功能
++ 在运行时判断任意一个对象所属的类
++ 在运行时创造任意一个类的对象
++ 在运行时判断任意一个类所具有的成员变量和方法
++ 在运行时获取泛型信息
++ 在运行时调用任意一个对象的成员变量和方法
++ 在运行时处理注解
++ 生成动态代理
+
+#### 15.1.5 相关API
+java.lang.Class: 反射的源头  
+java.lang.reflect.Method
+java.lang.reflect.Field
+java.lang.reflect.Constructor
+....
+
+### 15.2 Class类的理解与获取Class的实例
+#### 15.2.1 Class类的理解
+1. 类的加载过程：程序经过javac.exe命令以后，会生成一个或多个字节码文件(.class结尾)。接着我们使用java.exe命令对某个字节码文件进行解释运行。相当于将某个字节码文件加载到内存中。此过程就称为类的加载。加载到内存中的类被称为运行时类，此运行时类就作为Class的一个实例。  
+2. 换句话说，Class的实例就对应着一个运行时类
+3. 加载到内存中的运行时类会缓存一定的时间，在此时间内，我们可以通过不同的方式来获取此运行时类
+
+#### 15.2.2 获取Class实例的几种方式(前三种需要掌握)
+````
+        //方式一：调用运行时类的属性: .class
+        Class aClass1 = Person.class;
+        System.out.println(aClass1);
+
+        //方式二：通过运行时类的对象，调用getClass()方法
+        Person p1 = new Person();
+        Class aClass2 = p1.getClass();
+        System.out.println(aClass2);
+
+        //方式三：调用Class的静态方法：forName(String classPath)
+        //该方法能够更好的体现动态性
+        Class aClass3 = Class.forName("reflection.Person");
+        System.out.println(aClass3);
+
+        System.out.println(aClass1 == aClass2);
+        System.out.println(aClass1 == aClass3);
+
+        //*方式四：使用类的加载器：ClassLoader
+        ClassLoader classLoader = ReflectionTest.class.getClassLoader();
+        Class aClass4 = classLoader.loadClass("reflection.Person");
+        System.out.println(aClass4);
+````
+
+#### 15.2.3 总结：创建类的对象的方式
+方式一：new + 构造器  
+方式二：要创建Xxx类的对象，可以考虑Xxx、Xxxs、XxxFactory、XxxBuilder类中查看是否有静态方法存在，可以调用其静态方法创建Xxx对象。(例如：InetAddress类、Calendar类)  
+方式三：通过反射
+
+#### 15.2.4 Class实例可以是哪些结构的声明
++ class: 外部类，成员(成员内部类，静态内部类)，局部内部类、匿名内部类
++ interface: 接口
++ []: 数组
++ enum: 枚举
++ annotation: 注解@interface
++ primitive type: 基本数据类型
++ void 
 
 
 
