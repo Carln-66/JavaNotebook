@@ -1,7 +1,9 @@
 import exer.Person;
 import org.junit.Test;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -69,7 +71,35 @@ public class ReflectionTest {
 
         //3. 调用invoke(): 参数1：方法的调用者  参数2：给方法形参赋值的实参
         //invoke()的返回值与对应类中调用的方法的返回值相同
-        Object invoke = declaredMethod.invoke(p, "CHINA");
+        Object invoke = declaredMethod.invoke(p, "CHINA");  //String nation = p.show("CHINA")
+        System.out.println(invoke);
+
+        System.out.println("-------------调用静态方法--------------");
+
+        Method showDesc = aClass.getDeclaredMethod("showDesc");
+        showDesc.setAccessible(true);
+        //如果调用的运行时类中的方法没有返回值，则此invoke()返回null
+        Object invoke1 = showDesc.invoke(Person.class);
+        System.out.println(invoke1);
+    }
+
+    //如何调用运行时类中指定的构造器：实际中应用较少，原因是不具备通用性
+    @Test
+    public void testConstructor() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        Class aClass = Person.class;
+        //private Person(String name)
+        //1. 获取指定的构造器
+        //getDeclaredConstructor(): 参数：指明构造器的参数列表
+        Constructor constructor = aClass.getDeclaredConstructor(String.class);
+
+        //2. 保证构造器是可访问的
+        constructor.setAccessible(true);
+
+        //3. 调用此构造器创建运行时类的对象
+        Person person = (Person) constructor.newInstance("张三");
+        System.out.println(person);
+
+
 
     }
 }
