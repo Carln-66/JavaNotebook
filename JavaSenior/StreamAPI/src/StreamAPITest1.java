@@ -38,6 +38,9 @@ public class StreamAPITest1 {
         list.add(new Employee(1010, "马化腾", 22, 6520.38));
         list.add(new Employee(1010, "马化腾", 22, 6520.38));
         list.add(new Employee(1010, "马化腾", 22, 6520.38));
+        list.add(new Employee(1010, "马化腾", 22, 6520.38));
+        list.add(new Employee(1010, "马化腾", 22, 6520.38));
+        list.add(new Employee(1010, "马化腾", 22, 6520.38));
 
         list.stream().distinct().forEach(System.out::println);
     }
