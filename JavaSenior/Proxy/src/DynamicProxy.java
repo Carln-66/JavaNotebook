@@ -71,8 +71,6 @@ class MyInvocationHandler implements InvocationHandler{
         HumanUtil util = new HumanUtil();
         util.method1();
 
-
-
         //method: 即为代理类对象调用的方法，此方法也就作为了被代理类对象要调用的方法
         //obj: 被代理类的对象
         Object returnValue = method.invoke(obj, args);

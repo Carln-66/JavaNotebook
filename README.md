@@ -5424,9 +5424,644 @@ newInstance(): 调用此方法，创建对应的运行时类的对象。内部�
     }
 ````
 ### 15.7 反射应用四：动态代理
+#### 15.7.1 代理模式的原理
+使用一个代理对象包装起来，然后用该代理对象取代原始对象，任何对原始对象的调用都要通过代理。代理对象决定是否以及何时将方法调用到原始对象上。
+#### 15.7.2 静态代理
+##### 举例
+实现Runnable接口的方法创建多线程。  
+> Class MyThread implements Runnable{}  //相当于被代理类  
+> Class Thread implements Runnable{}    //相当于代理类  
+>   
+> public static void main(String[] args){  
+>   MyThread t = new MyThread();  
+>   Thread thread = new Thread(t);  
+>   thread.start(); //启动线程，调用线程的run()  
+> }
+##### 静态代理的缺点
+1. 代理类和目标对象的类都是在编译期间确定下来，不利于程序的扩展。  
+2. 每一个代理类只能为一个或一套接口服务，这样一来程序开发中必然产生过多的代理。
+#### 15.7.3 动态代理的特点
+动态代理是指客户通过代理类来调用其他对象的方法，并且是在程序运行时根据需要，动态创建目标类的代理对象。
+#### 15.7.4 动态代理的实现
+##### 需要解决的两个主要问题
++ 问题一：如何根据加载到内存中的被代理类，动态的创建一个代理类及其对象？ (通过Proxy.newProxyInstance()实现)  
++ 问题二：当通过代理类的对象调用方法a时，如何动态的去调用被代理类中的同名方法a？(通过InvocationHandler接口的实现类及其方法invoke())  
 
+##### 代码实现
+````
+interface Human{
+    String getBelief();
+    void eat (String food);
+}
 
+//被代理类
+class SuperMan implements Human{
 
+    @Override
+    public String getBelief() {
+        return "I believe I can fly";
+    }
+
+    @Override
+    public void eat(String food) {
+        System.out.println("喜欢吃" + food);
+    }
+}
+
+class HumanUtil{
+    public void method1(){
+        System.out.println("===================通用方法一==================");
+    }
+    public void method2(){
+        System.out.println("===================通用方法二==================");
+    }
+}
+
+class ProxyFactory{
+    //调用此静态方法，返回一个代理类的对象。解决问题一
+    public static Object getProxyInstance (Object obj){ //obj:被代理类的对象
+        MyInvocationHandler myInvocationHandler = new MyInvocationHandler();
+
+        myInvocationHandler.bind(obj);
+
+        return Proxy.newProxyInstance(obj.getClass().getClassLoader(), obj.getClass().getInterfaces(), myInvocationHandler);
+
+    }
+}
+
+class MyInvocationHandler implements InvocationHandler{
+
+    private Object obj; //需要使用被代理类的对象进行赋值
+
+    public void bind(Object obj){
+        this.obj = obj;
+    }
+
+    //当我们通过代理类的对象调用方法a时，就会自动的调用如下的方法
+    //将被代理类要执行的方法a的功能就声明在invoke方法中
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+
+        HumanUtil util = new HumanUtil();
+        util.method1();
+
+        //method: 即为代理类对象调用的方法，此方法也就作为了被代理类对象要调用的方法
+        //obj: 被代理类的对象
+        Object returnValue = method.invoke(obj, args);
+
+        util.method2();
+
+        //上述方法的返回值就作为当前类中invoke()的返回值
+        return returnValue;
+    }
+}
+
+public class DynamicProxy {
+    public static void main(String[] args) {
+        SuperMan superMan = new SuperMan();
+        //proxyInstance: 代理类的对象
+        Human proxyInstance = (Human) ProxyFactory.getProxyInstance(superMan);
+        //当通过代理类对象调用方法时，会自动的调用代理类中同名的方法
+        proxyInstance.getBelief();
+        proxyInstance.eat("蔬菜");
+
+        System.out.println("***********************************");
+
+        NikeClothFactory nikeClothFactory = new NikeClothFactory();
+
+        ClothFactory proxyInstance1 = (ClothFactory) ProxyFactory.getProxyInstance(nikeClothFactory);
+
+        proxyInstance1.produceCloth();
+    }
+}
+````
+
+## 16. Java8的其他新特性
+### 16.1 Java8新特性概述
+![Java8新特性](https://raw.githubusercontent.com/Carln-66/img/main/Java8%E6%96%B0%E7%89%B9%E6%80%A7.png)
+
+### 16.2 Lambda表达式
+#### 16.2.1 Lambda表达式的理解
+举例一：
+````
+    @Test
+    public void test1(){
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("这是一个测试");
+            }
+        };
+
+        runnable.run();
+
+        System.out.println("------------------------------------");
+
+        Runnable runnable1 = () -> System.out.println("这还是一个测试");
+
+        runnable1.run();
+    }
+````
+举例二：
+````
+    @Test
+    public void test2(){
+        Comparator<Integer> com1 = new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return Integer.compare(o1, o2);
+            }
+        };
+        int compare1 = com1.compare(10, 11);
+        System.out.println(compare1);
+
+        System.out.println("-----------------------------------------");
+
+        //Lambda表达式的写法
+        Comparator<Integer> com2 = (o1, o2) -> Integer.compare(o1, o2);
+
+        int compare2 = com2.compare(12, 11);
+        System.out.println(compare2);
+
+        System.out.println("-----------------------------------------");
+
+        //方法引用
+        Comparator<Integer> com3 = Integer::compare;
+
+        int compare3 = com3.compare(12, 11);
+        System.out.println(compare3);
+    }
+
+````
+#### 16.2.2 Lambda表达式的基本语法
+1. 举例：   (o1, o2) -> Integer.compare(o1, o2);  
+2. 格式：  
+->  Lambda操作符 或 箭头操作符  
+->  左边：Lambda形参列表(就是接口中的抽象方法的形参列表)  
+->  右边：Lambda体(就是重写的抽象方法的方法体)  
+   
+#### 16.2.3 如何使用：分为六种情况
+````
+    //语法格式1：无参，无返回值
+    @Test
+    public void test1(){
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("这是一个测试");
+            }
+        };
+
+        runnable.run();
+
+        System.out.println("------------------------------------");
+
+        Runnable runnable1 = () -> {
+            System.out.println("这还是一个测试");
+        };
+        runnable1.run();
+    }
+
+    //语法格式2：Lambda需要一个参数，但是没有返回值
+    @Test
+    public void test2(){
+        Consumer<String> con = new Consumer<String>() {
+            @Override
+            public void accept(String s) {
+                System.out.println(s);
+            }
+        };
+        con.accept("这是一个测试");
+
+        System.out.println("--------------------------------------");
+
+        Consumer<String> con1 = (String s) -> {
+            System.out.println(s);
+        };
+        con1.accept("这还是一个测试");
+    }
+
+    //语法格式3：数据类型可以省略，因为可由编译器推断得出，称为"类型推断"
+    @Test
+    public void test3(){
+        Consumer<String> con = (String s) -> {
+            System.out.println(s);
+        };
+        con.accept("这是一个测试");
+
+        System.out.println("--------------------------------------");
+
+        Consumer<String> con1 = (s) -> {
+            System.out.println(s);
+        };
+        con1.accept("这还是一个测试");
+    }
+
+    //语法格式4：Lambda若只需要一个参数时，参数的小括号可以省略
+    @Test
+    public void test4(){
+        Consumer<String> con = (s) -> {
+            System.out.println(s);
+        };
+        con.accept("这是一个测试");
+
+        System.out.println("--------------------------------------");
+
+        Consumer<String> con1 = s -> {
+            System.out.println(s);
+        };
+        con1.accept("这还是一个测试");
+    }
+
+    //语法格式5：Lambda需要两个或以上的参数，多条执行语句，并且可以有返回值
+    @Test
+    public void test5(){
+        Comparator<Integer> comparator1 = new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                System.out.println(o1);
+                System.out.println(o2);
+                return o1.compareTo(o2);
+            }
+        };
+        int compare1 = comparator1.compare(1, 2);
+        System.out.println(compare1);
+
+        System.out.println("--------------------------------------");
+
+        Comparator<Integer> comparator2 =(o1, o2) -> {
+            System.out.println(o1);
+            System.out.println(o2);
+            return o1.compareTo(o2);
+        };
+        int compare2 = comparator2.compare(2, 1);
+        System.out.println(compare2);
+    }
+
+    //语法格式6：Lambda体只有一条语句时，return与大括号若有，都可以省略
+    @Test
+    public void test6(){
+        Comparator<Integer> comparator1 =(o1, o2) -> {
+            return o1.compareTo(o2);
+        };
+        int compare1 = comparator1.compare(1, 2);
+        System.out.println(compare1);
+
+        System.out.println("--------------------------------------");
+
+        Comparator<Integer> comparator2 =(o1, o2) -> o1.compareTo(o2);
+        int compare2 = comparator2.compare(2, 2);
+        System.out.println(compare2);
+    }
+````
+
+#### 总结六种情况
+* 左边：Lambda形参列表的参数类型可以省略(类型推断)；如果Lambda形参列表只有一个参数，其一对()也可以省略
+* 右边：Lambda体应该使用一对{}包裹，如果Lambda体只有一条执行语句(也可能时return语句)，可以省略这两个部分。
+
+### 16.3 函数式接口
+#### 16.3.1 函数式接口的使用说明
+如果一个接口中只声明了一个抽象方法，则此接口就成为函数式接口(FunctionalInterface)。  
+我们可以在一个接口上使用@FunctionalInterface注解，这样做可以检查他是否是一个函数式接口。  
+Lambda表达式的本质：作为函数式接口的实例。  
+
+#### 16.3.2 java8中关于Lambda表达式提供的4个基本的函数式接口
+具体使用：
+![Java8内置四大核心函数式接口](https://raw.githubusercontent.com/Carln-66/img/main/Java%20%E5%86%85%E7%BD%AE%E5%9B%9B%E5%A4%A7%E6%A0%B8%E5%BF%83%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3.png)
+#### 16.3.3 总结
+##### 何时使用Lambda表达式？
+当需要对一个函数式接口实例化的时候，可以使用Lambda表达式。
+
+##### 何时使用给定的函数式接口
+如果开发中需要定义一个函数式接口，首先检查在已有的JDK提供的函数式接口是否提供了能满足需求的函数式接口，若有，就可以直接调用，不需要再声明
+### 16.4 方法引用
+#### 16.4.1 方法引用
+1. 理解：方法引用可以看作Lambda表达式深层次的表达，换句话说，方法引用就是Lambda表达式，也就是函数表达式接口的一个实例，通过方法的名字来指向一个方法，可以认为是Lambda表达式的一个语法糖  
+2. 使用情景：当要传递给Lambda体的操作已经有实现的方法了，就可以使用方法引用。  
+3. 格式：类(或对象) :: 方法名  
+4. 分为如下的三种情况  
+   情况1： 对象::非静态方法  
+   情况2： 类::静态方法  
+   情况3： 类::非静态方法  
+5. 要求：  
+    接口中的抽象方法的形参列表和返回值类型与方法引用的方法的形参列表和返回值类型相同(针对于情况1和情况2)  
+   当函数式接口方法的第一个参数是需要引用方法的调用者，并且第二个参数是需要引用方法的参数(或无参数)时: ClassName :: methodName
+6. 使用建议：如果给函数式接口提供实例，恰好满足方法引用的使用情景，可以考虑使用方法引用给函数式接口提供实例。如果不熟悉方法引用，仍然可以使用Lambda表达式。
+7. 使用举例：
+````
+	// 情况一：对象 :: 实例方法
+	//Consumer中的void accept(T t)
+	//PrintStream中的void println(T t)
+	@Test
+	public void test1() {
+		Consumer<String> consumer = str -> System.out.println(str);
+		consumer.accept("北京");
+
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+
+		PrintStream ps = System.out;
+		Consumer<String> consumer1 = ps :: println;
+		consumer1.accept("杭州");
+	}
+	
+	//Supplier中的T get()
+	//Employee中的String getName()
+	@Test
+	public void test2() {
+		Employee employee = new Employee(1001, "张三", 25, 18000);
+		Supplier<String> supplier1 = () -> employee.getName();
+		System.out.println(supplier1.get());
+
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+
+		Supplier<String> supplier2 = employee :: getName;
+		System.out.println(supplier2.get());
+	}
+
+	// 情况二：类 :: 静态方法
+	//Comparator中的int compare(T t1,T t2)
+	//Integer中的int compare(T t1,T t2)
+	@Test
+	public void test3() {
+		Comparator<Integer>	comparator1 = (t1, t2) -> Integer.compare(t1, t2);
+		System.out.println(comparator1.compare(56, 67));
+
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+
+		Comparator<Integer>	comparator2 = Integer :: compare;
+		System.out.println(comparator2.compare(12, 6));
+	}
+	
+	//Function中的R apply(T t)
+	//Math中的Long round(Double d)
+	@Test
+	public void test4() {
+		Function<Double, Long> func1 = d -> Math.round(d);
+		System.out.println(func1.apply(12.3));
+
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+
+		Function<Double, Long> func2 = Math :: round;
+		System.out.println(func1.apply(17.7));
+	}
+
+	// 情况三：类 :: 实例方法 (有难度)
+	// Comparator中的int compare(T t1,T t2)
+	// String中的int t1.compareTo(t2)
+	@Test
+	public void test5() {
+		Comparator<String> comparator1 = (s1, s2) -> s1.compareTo(s2);
+		System.out.println(comparator1.compare("aaa", "aad"));
+
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+
+		Comparator<String> comparator2 = String :: compareTo;
+		System.out.println(comparator2.compare("jsakd", "cxgbuyz"));
+	}
+
+	//BiPredicate中的boolean test(T t1, T t2);
+	//String中的boolean t1.equals(t2)
+	@Test
+	public void test6() {
+		BiPredicate<String, String> pre1 = (s1, s2) -> s1.equals(s2);
+		System.out.println(pre1.test("cyu", "cuu"));
+
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+
+		BiPredicate<String, String> pre2 = String :: equals;
+		System.out.println(pre2.test("cyu", "cyu"));
+	}
+	
+	// Function中的R apply(T t)
+	// Employee中的String getName();
+	@Test
+	public void test7() {
+		Employee employee = new Employee(100, "张三", 16, 8000);
+
+		Function<Employee, String> func1 = e -> e.getName();
+		System.out.println(func1.apply(employee));
+
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+
+		Function<Employee, String> func2 = Employee :: getName;
+		System.out.println(func2.apply(employee));
+	}
+````
+   
+### 16.5 构造器引用与数据引用
+1. 构造器引用的格式：  
+类名 :: new
+2. 构造器引用使用要求：  
+    和方法引用类似，函数式接口的抽象方法的形参列表和构造器的形参列表一致。  
+    抽象方法的返回值类型即为构造器所属的类的类型  
+3. 构造器引用举例：
+````
+	//构造器引用
+    //Supplier中的T get()
+    //Employee的空参构造器：Employee()
+    @Test
+    public void test1(){
+        Supplier<Employee> sup1 = () -> new Employee();
+        sup1.get();
+
+        System.out.println("=================================");
+
+        Supplier<Employee> sup2 = Employee :: new;
+        sup2.get();
+	}
+
+	//Function中的R apply(T t)
+    @Test
+    public void test2(){
+        Function<Integer, Employee> func1 = id -> new Employee(id);
+        System.out.println(func1.apply(1234));
+
+        System.out.println("=================================");
+
+        Function<Integer, Employee> func2 = Employee :: new;
+        System.out.println(func2.apply(1122));
+    }
+
+	//BiFunction中的R apply(T t,U u)
+    @Test
+    public void test3(){
+        BiFunction<Integer, String, Employee> func1 = (id, name) -> new Employee(id, name);
+        System.out.println(func1.apply(8888, "张三"));
+
+        System.out.println("=================================");
+
+        BiFunction<Integer, String, Employee> func2 = Employee :: new;
+        System.out.println(func2.apply(6396, "李四"));
+    }
+````
+4. 数组引用格式  
+数组类型[] :: new
+5. 数组引用举例：
+````
+	//数组引用
+    //Function中的R apply(T t)
+    @Test
+    public void test4(){
+        Function<Integer, String[]> func1 = length -> new String[length];
+        String[] apply = func1.apply(5);
+        System.out.println(Arrays.toString(apply));
+
+        System.out.println("=================================");
+
+        Function<Integer, String[]> func2 = String[] :: new;
+        String[] apply1 = func1.apply(4);
+        System.out.println(Arrays.toString(apply1));
+
+    }
+````
+
+### 16.6 StreamAPI
+1. Stream API的理解  
+   1.1 Stream关注的时对数据的运算，与CPU打交道；集合关注的是数据的存储，与内存打交道.  
+   1.2 Java8提供了一套API，使用这套API可以对内存中的数据进行过滤、排序、映射、归约等操作。类似于SQL对数据库的表的操作。
+2. 注意点  
+   2.1 Stream自己不会存储数据  
+   2.2 Stream不会改变源对象。相反，他们会返回一个持有结果的新Stream。  
+   2.3 Stream操作是延迟执行的，这意味着它们会等到需要结果的时候才执行。  
+3. Stream的使用流程：  
+   3.1 Stream的实例化  
+   3.2 一系列的中间操作(过滤、映射...)
+   3.3 终止操作
+4. 使用流程的注意点  
+   4.1 一个中间操作链，对数据源的数据进行处理   
+   4.2 一旦执行终止操作，就执行中间操作链，并产生结果。之后不会再被使用。  
+5. 步骤一：Stream实例化
+````
+    //创建Stream方式一：通过集合
+    @Test
+    public void test1(){
+        List<Employee> employees = EmployeeData.getEmployees();
+
+        //default Stream<E> stream(): 返回一个顺序流
+        Stream<Employee> stream = employees.stream();
+
+        //default Stream<E> parallelStream: 返回一个并行流
+        Stream<Employee> parallelStream = employees.parallelStream();
+    }
+
+    //创建Stream方式二：通过数组
+    @Test
+    public void test2(){
+        int[] arr = new int[]{1, 2, 3, 4, 5, 6};
+        //调用Arrays类的static<T> Stream<T> stream(T[] array): 返回一个流
+        IntStream stream = Arrays.stream(arr);
+        Employee employee1 = new Employee(100, "张三");
+        Employee employee2 = new Employee(101, "李四");
+        Employee employee3 = new Employee(102, "王五");
+        Employee[] arr1 = new Employee[]{employee1, employee2, employee3};
+
+        Stream<Employee> stream1 = Arrays.stream(arr1);
+    }
+
+    //创建Stream方式三：通过Stream的of()
+    @Test
+    public void test3(){
+        Stream<Integer> integerStream = Stream.of(1, 2, 3, 4, 5, 6);
+    }
+
+    //创建Stream方式四：创建无限流
+    @Test
+    public void test4(){
+        //迭代
+        //public static<T> Stream<T> iterate(final T seed, final UnaryOperator<T> f)
+        //遍历前10个偶数
+        Stream.iterate(0, t -> t + 2).limit(10).forEach(System.out :: println);
+        //生成
+        //public static<T> Stream<T> generate(Supplier<T> s)
+        Stream.generate(Math :: random).limit(10).forEach(System.out :: println);
+    }   
+````
+6. 步骤二：中间操作
+![Stream中间流 筛选与切片](https://github.com/Carln-66/img/blob/main/Stream%E4%B8%AD%E9%97%B4%E6%B5%81%20%E7%AD%9B%E9%80%89%E4%B8%8E%E5%88%87%E7%89%87.png?raw=true)
+   
+![Stream中间流 映射](https://github.com/Carln-66/img/blob/main/Stream%E4%B8%AD%E9%97%B4%E6%B5%81%20%E6%98%A0%E5%B0%84.png?raw=true)
+![Stream中间流 排序](https://github.com/Carln-66/img/blob/main/Stream%E4%B8%AD%E9%97%B4%E6%B5%81%20%E6%8E%92%E5%BA%8F.png?raw=true)
+7. 步骤三：终止操作
+![Stream终止操作 匹配与查找](https://github.com/Carln-66/img/blob/main/Stream%E7%BB%88%E6%AD%A2%E6%93%8D%E4%BD%9C%20%E5%8C%B9%E9%85%8D%E4%B8%8E%E6%9F%A5%E6%89%BE.png?raw=true)
+![Stream终止操作 匹配与查找](https://github.com/Carln-66/img/blob/main/Stream%E7%BB%88%E6%AD%A2%E6%93%8D%E4%BD%9C%20%E5%8C%B9%E9%85%8D%E4%B8%8E%E6%9F%A5%E6%89%BE1.png?raw=true)
+![Stream终止操作 归约](https://github.com/Carln-66/img/blob/main/Stream%E7%BB%88%E6%AD%A2%E6%93%8D%E4%BD%9C%20%E5%BD%92%E7%BA%A6.png?raw=true)
+**备注：map 和 reduce 的连接通常称为 map-reduce 模式，因 Google
+   用它来进行网络搜索而出名。**
+![Stream终止操作 收集](https://github.com/Carln-66/img/blob/main/Stream%E7%BB%88%E6%AD%A2%E6%93%8D%E4%BD%9C%20%E6%94%B6%E9%9B%86.png?raw=true)
+**Collector接口中方法的实现决定了如何对流执行收集的操作(如收集到 List、Set、Map)。  
+   Collector需要使用Collectors提供实例，具体如下**
+![Collectors API](https://github.com/Carln-66/img/blob/main/Collectors%20API.png?raw=true)
+![Collectors API](https://github.com/Carln-66/img/blob/main/Collectors%20API1.png?raw=true)
+
+### 16.7 Optional类的使用
+#### 16.7.1 理解
+为了解决Java中的空指针问题而生  
+Optional<T> 类(java.util.Optional)是一个容器类，它可以保存类型T的值，代表这个值存在。或者仅仅保存null，表示这个值不存在。原来用 null 表示一个值不存在，现在 Optional 可以更好的表达这个概念。并且可以避免空指针异常。
+
+#### 16.7.2 常用方法
+````
+    @Test
+    public void test1() {
+        //empty(): 创建的Optional对象内部的value = null;
+        Optional<Object> op1 = Optional.empty();
+        if (!op1.isPresent()) {  //Optional封装的数据是否为空
+            System.out.println("数据为空");
+        }
+        //如果Optional封装的数据value为空，则get()报错。否则，value不为空时，返回value
+//        System.out.println(op1.get());
+        System.out.println(op1.isPresent());
+    }
+
+    @Test
+    public void test2() {
+        String str = "hello";
+//        str = null;
+        //of(T t): 封装数据t生成Optional对象。要求t非空，否则报错。
+        Optional<String> stringOptional = Optional.of(str);
+        //get()通常与of()搭配使用。用于获取内部的封装的数据
+        System.out.println(stringOptional.get());
+    }
+
+    @Test
+    public void test3() {
+        String str = "hello";
+        str = null;
+        //ofNullable(T t): 封装数据t，赋给Optional内部的value。不要求t非空
+        Optional<String> s = Optional.ofNullable(str);
+        //orElse(T t)如果Optional内部的value非空，则返回此value值。如果value为空，则返回t。
+        String s1 = s.orElse("test");
+        System.out.println(s1);
+    }
+````
+
+#### 16.7.3 典型练习
+能保证如下的方法执行中不会出现空指针的异常
+````
+    //使用Optional类的getGirlName()
+
+    @Test
+    public void test5(){
+        Boy boy = null;
+        boy = new Boy();
+        boy.setGirl(new Girl("王五"));
+        String girlName = getGirlName2(boy);
+        System.out.println(girlName);
+    }
+
+    public String getGirlName2(Boy boy){
+        Optional<Boy> optionalBoy = Optional.ofNullable(boy);
+        //此时的boy1一定非空
+        Boy boy1 = optionalBoy.orElse(new Boy(new Girl("张三")));
+
+        Girl girl = boy1.getGirl();
+        
+        Optional<Girl> optionalGirl = Optional.ofNullable(girl);
+        //此时的girl1一定非空
+        Girl girl1 = optionalGirl.orElse(new Girl("李四"));
+
+        return girl1.getName();
+    }
+````
 
 
 

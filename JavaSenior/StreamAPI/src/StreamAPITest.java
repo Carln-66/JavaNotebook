@@ -72,5 +72,4 @@ public class StreamAPITest {
         //public static<T> Stream<T> generate(Supplier<T> s)
         Stream.generate(Math :: random).limit(10).forEach(System.out :: println);
     }
-
 }

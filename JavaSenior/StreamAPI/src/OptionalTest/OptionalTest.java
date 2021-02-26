@@ -83,11 +83,11 @@ public class OptionalTest {
         Boy boy1 = optionalBoy.orElse(new Boy(new Girl("张三")));
 
         Girl girl = boy1.getGirl();
+
         Optional<Girl> optionalGirl = Optional.ofNullable(girl);
         //此时的girl1一定非空
         Girl girl1 = optionalGirl.orElse(new Girl("李四"));
 
         return girl1.getName();
     }
-
 }
