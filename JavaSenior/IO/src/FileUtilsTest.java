@@ -1,7 +1,4 @@
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
 
 /**
  * @Auther: Carl
@@ -9,15 +6,15 @@ import java.io.IOException;
  * @Description:
  */
 public class FileUtilsTest {
-    public static void main(String[] args) {
-
-        File srcFile = new File("JavaSenior\\IO\\头像.jpg");
-        File destFile = new File("JavaSenior\\IO\\复制头像.jpg");
-        try {
-            FileUtils.copyFile(srcFile, destFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
+//    public static void main(String[] args) {
+//
+//        File srcFile = new File("JavaSenior\\IO\\头像.jpg");
+//        File destFile = new File("JavaSenior\\IO\\复制头像.jpg");
+//        try {
+//            FileUtils.copyFile(srcFile, destFile);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 }
