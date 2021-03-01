@@ -95,7 +95,4 @@ public class ProductTest {
         p1.start();
         c1.start();
     }
-
-
-
 }
